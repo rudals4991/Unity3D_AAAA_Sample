@@ -21,6 +21,12 @@ public class GameManager : MonoBehaviour
     private PoolManager poolManager;
     private StartManager startManager;
     private UIManager uiManager;
+    private ViewModeManager viewModeManager;
+    private StageManager stageManager;
+    private SpeedManager speedManager;
+    private CameraManager cameraManager;
+    private InputManager inputManager;
+    private GameStateManager gameStateManager;
     #endregion
     private void Awake()
     {
@@ -48,6 +54,12 @@ public class GameManager : MonoBehaviour
         poolManager ??= GetComponent<PoolManager>() ?? gameObject.AddComponent<PoolManager>();
         startManager ??= GetComponent<StartManager>() ?? gameObject.AddComponent<StartManager>();
         uiManager ??= GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
+        viewModeManager ??= GetComponent<ViewModeManager>() ?? gameObject.AddComponent<ViewModeManager>();
+        stageManager ??= GetComponent<StageManager>() ?? gameObject.AddComponent<StageManager>();
+        speedManager ??= GetComponent<SpeedManager>() ?? gameObject.AddComponent<SpeedManager>();
+        cameraManager ??= GetComponent<CameraManager>() ?? gameObject.AddComponent<CameraManager>();
+        inputManager ??= GetComponent<InputManager>() ?? gameObject.AddComponent<InputManager>();
+        gameStateManager ??= GetComponent<GameStateManager>() ?? gameObject.AddComponent<GameStateManager>();
 
         StartCoroutine(StartInitialize());
     }

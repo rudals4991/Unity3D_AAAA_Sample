@@ -407,7 +407,7 @@ GameObject:
   - component: {fileID: 717464357}
   - component: {fileID: 717464356}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 1958525175}
   - component: {fileID: 1958525174}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -569,7 +569,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TestPlayer
   gyro: {fileID: 1579807561}
   index: 1
-  moveSpeed: 3
+  moveSpeed: 5
   laneDistance: 2
   laneLerpSpeed: 5
 --- !u!136 &1958525175
@@ -788,3 +788,4 @@ SceneRoots:
   - {fileID: 2105192181}
   - {fileID: 1958525178}
   - {fileID: 1579807562}
+  - {fileID: 717464357}

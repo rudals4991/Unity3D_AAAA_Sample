@@ -9,9 +9,9 @@ public class TestPlayer : MonoBehaviour
     [SerializeField] private int index = 0;
 
     [Header("Values")]
-    [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private float laneDistance = 2f;
-    [SerializeField] private float laneLerpSpeed = 5f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float laneDistance;
+    [SerializeField] private float laneLerpSpeed;
     private int currentLane = 0;
 
     private void Update()

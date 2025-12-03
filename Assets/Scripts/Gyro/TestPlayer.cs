@@ -53,8 +53,7 @@ public class TestPlayer : MonoBehaviour
                 transform.position += Vector3.right * moveSpeed * Time.deltaTime; break;
             case GameMode.BackView_ToForward:
                 transform.position += Vector3.forward * moveSpeed * Time.deltaTime; break;
-            case GameMode.SideView_ToTop:
-                transform.position += Vector3.up * moveSpeed * Time.deltaTime; break;
+            case GameMode.SideView_ToTop: break;
             case GameMode.SideView_ToDown:
                 transform.position += Vector3.down * moveSpeed * Time.deltaTime; break;
         }

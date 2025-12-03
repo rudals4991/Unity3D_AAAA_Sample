@@ -2,40 +2,88 @@ using UnityEngine;
 
 public class CameraControll : MonoBehaviour
 {
-    //[SerializeField] Transform target;
-    float targetAspet = 16f / 9f;
-    private Camera cam;
-    private void Start()
+    [Header("Target")]
+    [SerializeField] Transform target;
+
+    [Header("Offsets")]
+    public Vector3 sideOffset = new Vector3(-5, 2, 0);   // Side Left->Right
+    public Vector3 topOffset = new Vector3(0, 5, -5);    // Down->Up
+    public Vector3 downOffset = new Vector3(0, -5, -5);  // Up->Down
+    public Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
+
+    private Vector3 targetPos;
+    private Quaternion targetRot;
+    private bool first = true;
+    private GameMode currentMode;
+
+    public void SetCameraMode(GameMode mode)
     {
-        cam = GetComponent<Camera>();
-        UpdateView();
+        currentMode = mode;
+        first = true;
     }
-    //private void FixedUpdate()
-    //{
-    //    transform.position = target.position;
-    //}
-    private void UpdateView()
-    { 
-        float windowAspect = (float)Screen.width / Screen.height;
-        float scaleHeight = windowAspect / targetAspet;
-        if (scaleHeight < 1f)
-        { 
-            Rect rect = cam.rect;
-            rect.width = 1f;
-            rect.height = scaleHeight;
-            rect.x = 0;
-            rect.y = (1f - scaleHeight) / 2f;
-            cam.rect = rect;
-        }
-        else
+    private void LateUpdate()
+    {
+        if (target == null) return;
+
+        UpdateCameraMode(currentMode);
+        ApplyCamera();
+    }
+    private void UpdateCameraMode(GameMode mode)
+    {
+        switch (mode)
         {
-            float scaleWidth = 1f / scaleHeight;
-            Rect rect = cam.rect;
-            rect.width = scaleWidth;
-            rect.height = 1f;
-            rect.x = (1f - scaleWidth) / 2f;
-            rect.y = 0;
-            cam.rect = rect;
+            case GameMode.SideView_ToRight:
+                targetPos = target.position + sideOffset;
+                targetRot = Quaternion.Euler(0f, 90f, 0f);
+                break;
+
+            case GameMode.BackView_ToForward:
+                targetPos = target.position + backOffset;
+                targetRot = Quaternion.Euler(20f, 0f, 0f);
+                break;
+
+            case GameMode.SideView_ToTop:
+                targetPos = target.position + topOffset;
+                targetRot = Quaternion.Euler(90f, 0f, 0f);
+                break;
+
+            case GameMode.SideView_ToDown:
+                targetPos = target.position + downOffset;
+                targetRot = Quaternion.Euler(-90f, 0f, 0f);
+                break;
         }
     }
+    private void ApplyCamera()
+    {
+        // 첫 프레임은 즉시 위치/회전 적용
+        if (first)
+        {
+            transform.position = targetPos;
+            transform.rotation = targetRot;
+            first = false;
+            return;
+        }
+
+        // 회전은 부드럽게
+        transform.rotation = Quaternion.Lerp(
+            transform.rotation,
+            targetRot,
+            Time.deltaTime * 8f
+        );
+
+        // 위치도 부드럽게 이동
+        transform.position = Vector3.Lerp(
+            transform.position,
+            targetPos,
+            Time.deltaTime * 5f
+        );
+
+        // 백뷰 모드의 좌우 흔들림 제어
+        if (currentMode == GameMode.BackView_ToForward)
+        {
+            float smoothedX = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
+            transform.position = new Vector3(smoothedX, transform.position.y, transform.position.z);
+        }
+    }
+
 }

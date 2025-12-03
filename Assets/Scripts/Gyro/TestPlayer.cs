@@ -5,35 +5,30 @@ public class TestPlayer : MonoBehaviour
     [Header("Gyro")]
     [SerializeField] private GyroTest gyro;
 
-    [Header("Move Mode 1: Just Move, 2: Line Move")]
-    [SerializeField] private int index = 0;
+    //[Header("Move Mode 1: Just Move, 2: Line Move")]
+    //[SerializeField] private int index = 0;
 
-    [Header("Values")]
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float laneDistance;
-    [SerializeField] private float laneLerpSpeed;
-    private int currentLane = 0;
 
     private void Update()
     {
-        if (index == 1) MoveLeftToRight();
-        else if (index == 2) MoveLine();
-        else return;
+        MoveLeftToRight();
     }
     private void MoveLeftToRight()
     {
-        float tilt = gyro.GetHorizontalTilt();
-        transform.position += Vector3.right * tilt * moveSpeed * Time.deltaTime;
+        float speed = gyro.GetHorizontalSpeed();
+        transform.position += Vector3.right * speed * Time.deltaTime;
     }
-    private void MoveLine()
-    {
-        float tilt = gyro.GetHorizontalTilt();
+    #region 라인옮기기 기능
+    //private void MoveLine()
+    //{
+    //    float tilt = gyro.GetHorizontalTilt();
 
-        if (tilt < -0.3f) currentLane = -1;
-        else if (tilt > 0.3f) currentLane = 1;
-        else currentLane = 0;
+    //    if (tilt < -0.3f) currentLane = -1;
+    //    else if (tilt > 0.3f) currentLane = 1;
+    //    else currentLane = 0;
 
-        Vector3 targetPos = new Vector3(currentLane * laneDistance, transform.position.y, transform.position.z);
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * laneLerpSpeed);
-    }
+    //    Vector3 targetPos = new Vector3(currentLane * laneDistance, transform.position.y, transform.position.z);
+    //    transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * laneLerpSpeed);
+    //}
+    #endregion
 }

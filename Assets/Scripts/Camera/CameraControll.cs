@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CameraControll : MonoBehaviour
 {
+    //[SerializeField] Transform target;
     float targetAspet = 16f / 9f;
     private Camera cam;
     private void Start()
@@ -9,6 +10,10 @@ public class CameraControll : MonoBehaviour
         cam = GetComponent<Camera>();
         UpdateView();
     }
+    //private void FixedUpdate()
+    //{
+    //    transform.position = target.position;
+    //}
     private void UpdateView()
     { 
         float windowAspect = (float)Screen.width / Screen.height;

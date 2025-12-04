@@ -9,6 +9,11 @@ public class GyroTest : MonoBehaviour
     [Header("Speed Setting")]
     [SerializeField] private float maxSpeed;
 
+    private void Awake()
+    {
+        DIContainer.Register(this);
+    }
+
     private void Start()
     {
 #if UNITY_ANDROID

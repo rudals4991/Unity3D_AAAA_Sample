@@ -36,10 +36,7 @@ public class TestPlayer : MonoBehaviour
         AutoRun(gameMode);
         GyroMove(gameMode);
         CheckIsGround();
-        if (IsTouch())
-        {
-            TryJump(gameMode);
-        }
+        if (IsTouch()) TryJump(gameMode);
     }
     private void FixedUpdate()
     {
@@ -50,7 +47,6 @@ public class TestPlayer : MonoBehaviour
         switch (mode)
         {
             case GameMode.SideView_ToRight:
-                transform.position += Vector3.right * moveSpeed * Time.deltaTime; break;
             case GameMode.BackView_ToForward:
                 transform.position += Vector3.forward * moveSpeed * Time.deltaTime; break;
             case GameMode.SideView_ToTop: break;
@@ -77,9 +73,7 @@ public class TestPlayer : MonoBehaviour
         {
             case GameMode.SideView_ToRight:
             case GameMode.BackView_ToForward:
-            case GameMode.SideView_ToTop:
-                Jump(); break;
-
+            case GameMode.SideView_ToTop: Jump(); break;
             case GameMode.SideView_ToDown: break;
         }
     }

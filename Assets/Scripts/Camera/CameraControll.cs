@@ -3,13 +3,13 @@ using UnityEngine;
 public class CameraControll : MonoBehaviour
 {
     [Header("Target")]
-    [SerializeField] Transform target;
+    [SerializeField] private Transform target;
 
     [Header("Offsets")]
-    public Vector3 sideOffset = new Vector3(-5, 2, 0);   // Side Left->Right
-    public Vector3 topOffset = new Vector3(0, 5, -5);    // Down->Up
-    public Vector3 downOffset = new Vector3(0, -5, -5);  // Up->Down
-    public Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
+    [SerializeField] Vector3 sideOffset = new Vector3(-5, 2, 0);   // Side Left->Right
+    [SerializeField] Vector3 topOffset = new Vector3(0, 5, -5);    // Down->Up
+    [SerializeField] Vector3 downOffset = new Vector3(0, -5, -5);  // Up->Down
+    [SerializeField] Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
 
     private Vector3 targetPos;
     private Quaternion targetRot;
@@ -24,7 +24,6 @@ public class CameraControll : MonoBehaviour
     private void LateUpdate()
     {
         if (target == null) return;
-
         UpdateCameraMode(currentMode);
         ApplyCamera();
     }
@@ -34,7 +33,7 @@ public class CameraControll : MonoBehaviour
         {
             case GameMode.SideView_ToRight:
                 targetPos = target.position + sideOffset;
-                targetRot = Quaternion.Euler(0f, 90f, 0f);
+                targetRot = Quaternion.Euler(0f, -90f, 0f);
                 break;
 
             case GameMode.BackView_ToForward:

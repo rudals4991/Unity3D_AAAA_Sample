@@ -15,7 +15,6 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         DIContainer.Register(this);
         yield return null;
     }
-
     public void Tick(float dt) 
     {
         //CharacterManager 하위의 Character Object들의 Update를 이곳에서 처리합니다.

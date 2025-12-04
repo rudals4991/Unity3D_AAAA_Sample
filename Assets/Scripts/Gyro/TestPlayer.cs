@@ -24,12 +24,23 @@ public class TestPlayer : MonoBehaviour
     private CapsuleCollider capsuleCollider;
     private bool isGround;
 
+    float gravityStrength;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         cameraControll.SetCameraMode(gameMode);
+
+        switch (gameMode)
+        {
+            case GameMode.SideView_ToRight:
+            case GameMode.BackView_ToForward:
+            case GameMode.SideView_ToTop:
+                gravityStrength = 1f; break;
+            case GameMode.SideView_ToDown:
+                gravityStrength = 0.05f; break;
+        }
     }
     private void Update()
     {
@@ -49,19 +60,17 @@ public class TestPlayer : MonoBehaviour
             case GameMode.SideView_ToRight:
             case GameMode.BackView_ToForward:
                 transform.position += Vector3.forward * moveSpeed * Time.deltaTime; break;
-            case GameMode.SideView_ToTop: break;
-            case GameMode.SideView_ToDown:
-                transform.position += Vector3.down * moveSpeed * Time.deltaTime; break;
         }
     }
     private void GyroMove(GameMode mode)
     {
+        float speed = gyro.GetHorizontalSpeed();
         switch (mode)
         {
             case GameMode.BackView_ToForward:
             case GameMode.SideView_ToTop:
             case GameMode.SideView_ToDown:
-                float speed = gyro.GetHorizontalSpeed();
+                //float speed = gyro.GetHorizontalSpeed();
                 transform.position += Vector3.right * speed * Time.deltaTime; break;
 
             case GameMode.SideView_ToRight: break;
@@ -108,7 +117,7 @@ public class TestPlayer : MonoBehaviour
     {
         if (rb.linearVelocity.y < 0)
         {
-            rb.AddForce(Vector3.up * Physics.gravity.y * (fallMultiplier - 1f), ForceMode.Acceleration);
+            rb.AddForce(Vector3.up * Physics.gravity.magnitude * gravityStrength, ForceMode.Acceleration);
         }
     }
     #region 라인옮기기 기능

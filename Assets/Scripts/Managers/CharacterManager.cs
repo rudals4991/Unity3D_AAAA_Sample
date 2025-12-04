@@ -1,9 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-//CharacterManager는 맵에 존재하는 Character Object의 생성과 Update를 담당합니다.
 public class CharacterManager : MonoBehaviour, IManagerBase
 {
+    [SerializeField] GameObject playerPrefab;
+    [SerializeField] CameraViewController controller;
+    Player player;
     public int Priority => 2;
 
     public void Exit()
@@ -15,10 +18,20 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         DIContainer.Register(this);
         yield return null;
     }
-    public void Tick(float dt) 
+    public void CreatePlayer()
     {
-        //CharacterManager 하위의 Character Object들의 Update를 이곳에서 처리합니다.
-        //해당 클래스의 Tick 메서드는 최상위 Manager인 GameManager에서 호출합니다.
-        //예시: testCharacter.Tick(dt);
+        if (player != null) Destroy(player.gameObject);
+        player = Instantiate(playerPrefab).GetComponent<Player>();
+    }
+    public void InitializePlayer(GameMode mode)
+    {
+        if (player == null) CreatePlayer();
+        player.Initialize(mode);
+        controller.SetTarget(player.transform);
+        controller.SetCameraMode(mode);
+    }
+    public void Tick(float dt)
+    {
+        player.Tick(dt);
     }
 }

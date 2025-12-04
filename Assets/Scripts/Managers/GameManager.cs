@@ -15,18 +15,9 @@ public class GameManager : MonoBehaviour
 
     //Manager 맴버
     #region ManagerClass
-    private AudioManager audioManager;
-    private CharacterManager characterManager;
-    private LoadingManager loadingManager;
-    private PoolManager poolManager;
-    private StartManager startManager;
-    private UIManager uiManager;
-    private ViewModeManager viewModeManager;
-    private StageManager stageManager;
-    private SpeedManager speedManager;
-    private CameraManager cameraManager;
-    private InputManager inputManager;
-    private GameStateManager gameStateManager;
+    GameModeManager gameModeManager;
+    CharacterManager characterManager;
+    StageManager stageManager;
     #endregion
     private void Awake()
     {
@@ -40,27 +31,15 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        if (!isInitialized) return; //아직 초기화가 완료되지 않았을 경우, 의미가 없으므로 return으로 방어
-        // Tick()을 사용하는 이유: 스크립트들의 Update 호출 순서를 보장
         float dt = Time.deltaTime;
         characterManager.Tick(dt);
     }
     private void GetAndAdd()
     {
         // 별도의 GameObject를 만드는게 아닌 GameManager Object에 AddComponet를 통해 추가합니다.
-        audioManager ??= GetComponent<AudioManager>() ?? gameObject.AddComponent<AudioManager>();
+        gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
         characterManager ??= GetComponent<CharacterManager>() ?? gameObject.AddComponent<CharacterManager>();
-        loadingManager ??= GetComponent<LoadingManager>() ?? gameObject.AddComponent<LoadingManager>();
-        poolManager ??= GetComponent<PoolManager>() ?? gameObject.AddComponent<PoolManager>();
-        startManager ??= GetComponent<StartManager>() ?? gameObject.AddComponent<StartManager>();
-        uiManager ??= GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
-        viewModeManager ??= GetComponent<ViewModeManager>() ?? gameObject.AddComponent<ViewModeManager>();
         stageManager ??= GetComponent<StageManager>() ?? gameObject.AddComponent<StageManager>();
-        speedManager ??= GetComponent<SpeedManager>() ?? gameObject.AddComponent<SpeedManager>();
-        cameraManager ??= GetComponent<CameraManager>() ?? gameObject.AddComponent<CameraManager>();
-        inputManager ??= GetComponent<InputManager>() ?? gameObject.AddComponent<InputManager>();
-        gameStateManager ??= GetComponent<GameStateManager>() ?? gameObject.AddComponent<GameStateManager>();
-
         StartCoroutine(StartInitialize());
     }
     private IEnumerator StartInitialize()

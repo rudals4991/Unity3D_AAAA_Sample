@@ -6,10 +6,10 @@ public class CameraControll : MonoBehaviour
     [SerializeField] private Transform target;
 
     [Header("Offsets")]
-    [SerializeField] Vector3 sideOffset = new Vector3(-5, 2, 0);   // Side Left->Right
-    [SerializeField] Vector3 topOffset = new Vector3(0, 5, -5);    // Down->Up
-    [SerializeField] Vector3 downOffset = new Vector3(0, -5, -5);  // Up->Down
-    [SerializeField] Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
+    Vector3 sideOffset = new Vector3(6, 1, 5);   // Side Left->Right
+    Vector3 topOffset = new Vector3(6, -2, 0);    // Down->Up
+    Vector3 downOffset = new Vector3(10, 2, 0);  // Up->Down
+    Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
 
     private Vector3 targetPos;
     private Quaternion targetRot;
@@ -43,12 +43,12 @@ public class CameraControll : MonoBehaviour
 
             case GameMode.SideView_ToTop:
                 targetPos = target.position + topOffset;
-                targetRot = Quaternion.Euler(90f, 0f, 0f);
+                targetRot = Quaternion.Euler(0f, -90f, 0f);
                 break;
 
             case GameMode.SideView_ToDown:
                 targetPos = target.position + downOffset;
-                targetRot = Quaternion.Euler(-90f, 0f, 0f);
+                targetRot = Quaternion.Euler(0f, -90f, 0f);
                 break;
         }
     }
@@ -71,18 +71,24 @@ public class CameraControll : MonoBehaviour
         );
 
         // 위치도 부드럽게 이동
-        transform.position = Vector3.Lerp(
+        Vector3 pos = Vector3.Lerp(
             transform.position,
             targetPos,
             Time.deltaTime * 5f
         );
-
-        // 백뷰 모드의 좌우 흔들림 제어
-        if (currentMode == GameMode.BackView_ToForward)
+        switch (currentMode)
         {
-            float smoothedX = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
-            transform.position = new Vector3(smoothedX, transform.position.y, transform.position.z);
+            case GameMode.BackView_ToForward:
+                float smoothedX = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
+                pos.x = smoothedX; break;
+            case GameMode.SideView_ToRight:
+                pos.y = transform.position.y; break;
+            case GameMode.SideView_ToTop:
+            case GameMode.SideView_ToDown:
+                pos.x = transform.position.x; break;
         }
+
+        transform.position = pos;
     }
 
 }

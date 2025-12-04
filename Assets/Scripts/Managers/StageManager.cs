@@ -1,18 +1,27 @@
 using System.Collections;
 using UnityEngine;
 
-// 현재 시점에 맞는 Stage 생성 및 제거 (세그먼트 기반의 구간 생성 및 제거 + 트리거 관리)
 public class StageManager : MonoBehaviour, IManagerBase
 {
-    public int Priority => 8;
+    public int Priority => 3;
+    CharacterManager characterManager;
 
     public void Exit()
     {
-        
+        GameModeManager.OnGameModeChanged -= OnGameModeChanged;
     }
 
     public IEnumerator Initialize()
     {
+        DIContainer.Register(this);
         yield return null;
+        characterManager = DIContainer.Resolve<CharacterManager>();
+        GameModeManager.OnGameModeChanged -= OnGameModeChanged;
+        GameModeManager.OnGameModeChanged += OnGameModeChanged;
+    }
+    void OnGameModeChanged(GameMode mode)
+    {
+        characterManager.CreatePlayer();
+        characterManager.InitializePlayer(mode);
     }
 }

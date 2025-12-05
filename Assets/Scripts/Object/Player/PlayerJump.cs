@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerJump : MonoBehaviour
 {
-    int maxJumpCount = 2;
+    int maxJumpCount;
     int jumpCount = 0;
     bool isGround = false;
     Player player;
@@ -48,6 +48,15 @@ public class PlayerJump : MonoBehaviour
         {
             player.Rb.AddForce(Vector3.up * Physics.gravity.y * (player.FallMultiplier - 1f),
                 ForceMode.Acceleration);
+        }
+    }
+    public void SetJumpCountByMode(GameMode mode)
+    {
+        switch (mode)
+        {
+            case GameMode.BackView_ToForward: maxJumpCount = player.JumpCount_Back; break;
+            case GameMode.SideView_ToRight: maxJumpCount = player.JumpCount_Side; break;
+            default:maxJumpCount = 0; break;
         }
     }
 }

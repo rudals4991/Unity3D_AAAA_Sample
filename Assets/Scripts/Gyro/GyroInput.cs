@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class GyroInput : MonoBehaviour
 {
-    float sensitivity = 1.2f;
-
-    void Start()
-    {
+    Player player;
+    public void Initialize(Player player)
+    { 
+        this.player = player;
 #if UNITY_ANDROID
         Input.gyro.enabled = true;
 #endif
@@ -13,7 +13,7 @@ public class GyroInput : MonoBehaviour
     public float GetTilt()
     {
 #if UNITY_ANDROID
-        return Mathf.Clamp(Input.gyro.gravity.x * sensitivity, -1f, 1f);
+        return Mathf.Clamp(Input.gyro.gravity.x * player.Sensitivity, -1f, 1f);
 
 #else
         return GetEditorTilt();

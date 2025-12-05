@@ -5,7 +5,7 @@ public class Player : MonoBehaviour
     public float MoveSpeed { get; private set; } = 5f;
     public float GyroSpeedLeftRight { get; private set; } = 5f;
     public float GyroSpeedForward { get; private set; } = 5f;
-    public float JumpForce { get; private set; } = 6f;
+    public float JumpForce { get; private set; } = 4f;
     public float DeadZone { get; private set; } = 0.1f;
     public float FallMultiplier { get; private set; } = 2f;
 
@@ -20,7 +20,6 @@ public class Player : MonoBehaviour
     bool canAutoMove;
     bool canGyroMove;
     bool canJump;
-
 
     public void Initialize(GameMode mode)
     {
@@ -44,7 +43,7 @@ public class Player : MonoBehaviour
         if(canGyroMove) PlayerGyroMove.GyroMove(dt);
         if(canJump) PlayerJump.Jump(dt);
     }
-    private void ApplyGameMode(GameMode gameMode)
+    void ApplyGameMode(GameMode gameMode)
     {
         switch (gameMode)
         {

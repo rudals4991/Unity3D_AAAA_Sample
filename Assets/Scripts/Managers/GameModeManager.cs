@@ -13,7 +13,6 @@ public class GameModeManager : MonoBehaviour, IManagerBase
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-
     public IEnumerator Initialize()
     {
         DIContainer.Register(this);

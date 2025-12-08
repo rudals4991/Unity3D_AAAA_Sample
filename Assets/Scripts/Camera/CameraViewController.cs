@@ -6,7 +6,7 @@ public class CameraViewController : MonoBehaviour
 
     Vector3 sideOffset = new Vector3(6, 1, 5);   // Side Left->Right
     Vector3 topOffset = new Vector3(6, -2, 0);    // Down->Up
-    Vector3 downOffset = new Vector3(6, 2, 0);  // Up->Down
+    Vector3 downOffset = new Vector3(6, -2, 0);  // Up->Down
     Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
 
     Vector3 targetPos;
@@ -14,6 +14,12 @@ public class CameraViewController : MonoBehaviour
     bool first = true;
     GameMode gameMode;
 
+    void Start()
+    {
+        DIContainer.Register(this);
+        GameModeManager.OnGameModeChanged -= SetCameraMode;
+        GameModeManager.OnGameModeChanged += SetCameraMode;
+    }
     public void SetTarget(Transform t)
     { 
         target = t;

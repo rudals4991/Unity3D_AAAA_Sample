@@ -5,8 +5,8 @@ using UnityEngine;
 public class CharacterManager : MonoBehaviour, IManagerBase
 {
     [SerializeField] GameObject playerPrefab;
-    [SerializeField] CameraViewController controller;
     Player player;
+    CameraViewController controller;
     public int Priority => 2;
 
     public void Exit()
@@ -22,16 +22,18 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     {
         if (player != null) Destroy(player.gameObject);
         player = Instantiate(playerPrefab).GetComponent<Player>();
+        
     }
     public void InitializePlayer(GameMode mode)
     {
-        if (player == null) CreatePlayer();
+        CreatePlayer();
+        if(controller == null) controller = DIContainer.Resolve<CameraViewController>();
+        controller.SetTarget(player.transform); 
         player.Initialize(mode);
-        controller.SetTarget(player.transform);
-        controller.SetCameraMode(mode);
     }
     public void Tick(float dt)
     {
+        if (player == null) return;
         player.Tick(dt);
     }
 }

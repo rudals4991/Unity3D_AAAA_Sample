@@ -69,6 +69,9 @@ PrefabInstance:
       addedObject: {fileID: 4011743244274253225}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -1407433510466024448}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
+      insertIndex: -1
       addedObject: {fileID: -9092446710008378221}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
@@ -100,6 +103,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da6ef7781760b6d4896a0675f3b58dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  data: {fileID: 11400000, guid: d4597ef1c9ebba9448d2baa141e62661, type: 2}
+--- !u!114 &-1407433510466024448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3966718861500053836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef075353c9f764741865a74dfcf2efd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GyroInput
 --- !u!114 &-9092446710008378221
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,6 +6,8 @@ public class StageManager : MonoBehaviour, IManagerBase
     public int Priority => 3;
     CharacterManager characterManager;
 
+    bool isLoaded;
+
     public void Exit()
     {
         GameModeManager.OnGameModeChanged -= OnGameModeChanged;
@@ -21,7 +23,16 @@ public class StageManager : MonoBehaviour, IManagerBase
     }
     void OnGameModeChanged(GameMode mode)
     {
-        characterManager.CreatePlayer();
-        characterManager.InitializePlayer(mode);
+        if (!isLoaded)
+        { 
+            isLoaded = true;
+            characterManager.CreatePlayer();
+            characterManager.InitializePlayer(mode);
+            StageStart();
+        }
+    }
+    void StageStart()
+    { 
+        //TODO: 카운트 다운 연출 넣기
     }
 }

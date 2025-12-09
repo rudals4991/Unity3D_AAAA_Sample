@@ -15,7 +15,7 @@ public class PlayerGyroMove : MonoBehaviour
     }
     public void GyroMove(float dt)
     {
-        float tilt = player.GyroInput.GetTilt();
+        float tilt = player.PlayerInput.GetTilt();
         if (Mathf.Abs(tilt) < player.DeadZone) return;
         switch (gyroMode)
         {

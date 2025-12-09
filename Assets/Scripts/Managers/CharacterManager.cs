@@ -31,6 +31,10 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         controller.SetTarget(player.transform); 
         player.Initialize(mode);
     }
+    public void SetMode(GameMode mode)
+    { 
+        player.ApplyGameMode(mode);
+    }
     public void Tick(float dt)
     {
         if (player == null) return;

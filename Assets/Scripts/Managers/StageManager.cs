@@ -30,6 +30,7 @@ public class StageManager : MonoBehaviour, IManagerBase
             characterManager.InitializePlayer(mode);
             StageStart();
         }
+        characterManager.SetMode(mode);
     }
     void StageStart()
     { 

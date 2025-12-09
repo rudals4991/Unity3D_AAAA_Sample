@@ -4,28 +4,37 @@ public class PlayerJump : MonoBehaviour
 {
     int maxJumpCount;
     int jumpCount = 0;
+    bool canJump = false;
     bool isGround = false;
+    bool wasGround = false;
+
     Player player;
 
     public void Initialize(Player player)
     {
         this.player = player;
+        ResetJumpState();
     }
     public void Jump(float dt)
     {
         CheckGround();
-        if (Input.GetMouseButtonDown(0))TryJump();
+        if (canJump)
+        {
+            TryJump();
+            canJump = false;
+        }
         ApplyGravity(dt);
+    }
+    public void SetCanJump()
+    { 
+        canJump = true;
     }
     void CheckGround()
     {
         float dist = player.Capsule.bounds.extents.y + 0.1f;
-        if (Physics.Raycast(transform.position, Vector3.down, dist))
-        { 
-            isGround = true;
-            jumpCount = 0;
-        }
-        else isGround = false;
+        wasGround = isGround;
+        isGround = Physics.Raycast(transform.position, Vector3.down, dist);
+        if (!wasGround && isGround) jumpCount = 0;
     }
     public void JumpByPlatform(float customForce)
     {
@@ -58,5 +67,12 @@ public class PlayerJump : MonoBehaviour
             case GameMode.SideView_ToRight: maxJumpCount = player.JumpCount_Side; break;
             default:maxJumpCount = 0; break;
         }
+    }
+    public void ResetJumpState()
+    { 
+        jumpCount = 0;
+        wasGround = false;
+        isGround = false;
+        canJump = false;
     }
 }

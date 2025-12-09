@@ -9,11 +9,11 @@ public class Player : MonoBehaviour
     public Rigidbody Rb { get; private set; }                  
     public CapsuleCollider Capsule { get; private set; }     
 
-    // Player 오브젝트 기능 컴포넌트(외부 접근용)
-    public GyroInput GyroInput { get; private set; }            
+    // Player 오브젝트 기능 컴포넌트(외부 접근용)          
     public PlayerAutoMove PlayerAutoMove { get; private set; }
     public PlayerGyroMove PlayerGyroMove {get; private set;}
     public PlayerJump PlayerJump {get; private set;}
+    public PlayerInput PlayerInput { get; private set; }
 
     // Player 오브젝트 데이터 값(외부 접근용)
     public float MoveSpeed => data.moveSpeed;                   //이동속도 초기세팅
@@ -37,20 +37,18 @@ public class Player : MonoBehaviour
     {
         Rb = GetComponent<Rigidbody>();
         Capsule = GetComponent<CapsuleCollider>();
-        GyroInput = GetComponent<GyroInput>();
 
         PlayerAutoMove = GetComponent<PlayerAutoMove>();
         PlayerGyroMove = GetComponent<PlayerGyroMove>();
         PlayerJump = GetComponent<PlayerJump>();
-        GyroInput = GetComponent<GyroInput>();
+        PlayerInput = GetComponent<PlayerInput>();
 
         PlayerAutoMove.Initialize(this);
         PlayerGyroMove.Initialize(this);
         PlayerJump.Initialize(this);
-        GyroInput.Initialize(this);
+        PlayerInput.Initialize(this);
 
         CurrentMoveSpeed = MoveSpeed;
-
         ApplyGameMode(mode);
     }
 
@@ -59,12 +57,17 @@ public class Player : MonoBehaviour
     {
         if(canAutoMove) PlayerAutoMove.AutoMove(dt);
         if(canGyroMove) PlayerGyroMove.GyroMove(dt);
-        if(canJump) PlayerJump.Jump(dt);
+        if (canJump)
+        {
+            if (PlayerInput.GetJump()) PlayerJump.SetCanJump();
+            PlayerJump.Jump(dt);
+        }
     }
 
     //게임 모드별 기능 적용 메서드
-    void ApplyGameMode(GameMode gameMode)
+    public void ApplyGameMode(GameMode gameMode)
     {
+        Debug.Log($"mode : {gameMode}");
         switch (gameMode)
         {
             case GameMode.BackView_ToForward:
@@ -74,6 +77,7 @@ public class Player : MonoBehaviour
                     canJump = true;
                     PlayerGyroMove.SetGyroMode(GyroMode.LeftRight);
                     PlayerJump.SetJumpCountByMode(gameMode);
+                    PlayerJump.ResetJumpState();
                 } break;
             case  GameMode.SideView_ToRight:
                 {
@@ -81,6 +85,7 @@ public class Player : MonoBehaviour
                     canGyroMove = false;
                     canJump = true;
                     PlayerJump.SetJumpCountByMode(gameMode);
+                    PlayerJump.ResetJumpState();
                 } break;
             case GameMode.SideView_ToTop:
 

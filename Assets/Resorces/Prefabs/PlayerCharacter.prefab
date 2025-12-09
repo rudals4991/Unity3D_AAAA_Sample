@@ -69,9 +69,6 @@ PrefabInstance:
       addedObject: {fileID: 4011743244274253225}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -1407433510466024448}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
-      insertIndex: -1
       addedObject: {fileID: -9092446710008378221}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
@@ -79,6 +76,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
       addedObject: {fileID: -9112635608369403456}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -414778839553411627}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8602187500841701139}
@@ -104,18 +104,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   data: {fileID: 11400000, guid: d4597ef1c9ebba9448d2baa141e62661, type: 2}
---- !u!114 &-1407433510466024448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3966718861500053836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef075353c9f764741865a74dfcf2efd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GyroInput
 --- !u!114 &-9092446710008378221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,6 +140,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 146dd1ae4a43b0d43aeda42995e212fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
+--- !u!114 &-414778839553411627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3966718861500053836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e06ee5d3647e984eb315ba3518c00bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
 --- !u!54 &8602187500841701139
 Rigidbody:
   m_ObjectHideFlags: 0

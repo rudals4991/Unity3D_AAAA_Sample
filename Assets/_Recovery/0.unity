@@ -256,7 +256,6 @@ GameObject:
   m_Component:
   - component: {fileID: 785364948}
   - component: {fileID: 785364947}
-  - component: {fileID: 785364949}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -291,19 +290,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &785364949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 785364946}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11f894ec4bfffa246b7945077b2305bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
-  playerPrefab: {fileID: 3966718861500053836, guid: 82566ee5bce20d146a497fcc20e80528, type: 3}
 --- !u!1 &876639361
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,6 +338,6 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 785364948}
   - {fileID: 583709859}
   - {fileID: 876639363}
-  - {fileID: 785364948}

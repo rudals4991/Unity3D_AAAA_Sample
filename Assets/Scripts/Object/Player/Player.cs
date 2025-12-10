@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public PlayerGyroMove PlayerGyroMove {get; private set;}
     public PlayerJump PlayerJump {get; private set;}
     public PlayerInput PlayerInput { get; private set; }
+    public PlayerCollisionController CollisionController { get; private set; }
 
     // Player 오브젝트 데이터 값(외부 접근용)
     public float MoveSpeed => data.moveSpeed;                   //이동속도 초기세팅
@@ -32,6 +33,8 @@ public class Player : MonoBehaviour
     bool canGyroMove;
     bool canJump;
 
+    public bool canTick = true;
+
     //초기화 메서드 (Awake, Start 대체)
     public void Initialize(GameMode mode)
     {
@@ -42,11 +45,13 @@ public class Player : MonoBehaviour
         PlayerGyroMove = GetComponent<PlayerGyroMove>();
         PlayerJump = GetComponent<PlayerJump>();
         PlayerInput = GetComponent<PlayerInput>();
+        CollisionController = GetComponent<PlayerCollisionController>();
 
         PlayerAutoMove.Initialize(this);
         PlayerGyroMove.Initialize(this);
         PlayerJump.Initialize(this);
         PlayerInput.Initialize(this);
+        CollisionController.Initialize(this);
 
         CurrentMoveSpeed = MoveSpeed;
         ApplyGameMode(mode);
@@ -55,6 +60,7 @@ public class Player : MonoBehaviour
     //Update 대체
     public void Tick(float dt)
     {
+        if (!canTick) return;
         if(canAutoMove) PlayerAutoMove.AutoMove(dt);
         if(canGyroMove) PlayerGyroMove.GyroMove(dt);
         if (canJump)

@@ -81,6 +81,9 @@ PrefabInstance:
       addedObject: {fileID: -414778839553411627}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5741146714812323537}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8602187500841701139}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 86eb473ebf2deef4b82084f07823747d, type: 3}
       insertIndex: -1
@@ -104,6 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   data: {fileID: 11400000, guid: d4597ef1c9ebba9448d2baa141e62661, type: 2}
+  canTick: 1
 --- !u!114 &-9092446710008378221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,6 +159,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e06ee5d3647e984eb315ba3518c00bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
+--- !u!114 &5741146714812323537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3966718861500053836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56fde76f00bddb34394006708102389c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCollisionController
 --- !u!54 &8602187500841701139
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 
 public class PlayerJump : MonoBehaviour
 {
     int maxJumpCount;
-    private int _jumpCount;
+    int _jumpCount;
+    bool wasAscending = false;
+    public event Action OnJumpStarted;
+    public event Action OnJumpApex;
     int jumpCount 
     {
         get { return _jumpCount; } 
@@ -27,15 +31,13 @@ public class PlayerJump : MonoBehaviour
     }
     public void Jump(float dt)
     {
+        float vy = player.Rb.linearVelocity.y;
+        bool isAscending = vy > 0;
+        if (wasAscending && vy <= 0) OnJumpApex?.Invoke();
+        wasAscending = isAscending;
 
         // 땅 감지 상태 갱신
         isGround = CheckGround();
-
-        // 땅을 감지하지 못한 경우
-        //if (!isGround)
-        //{
-        //    return;
-        //}
 
         // 착지했을 경우
         if (!wasGround && isGround)
@@ -69,9 +71,6 @@ public class PlayerJump : MonoBehaviour
         Ray ray = new Ray(origin, direction);
 
         return Physics.Raycast(ray, out RaycastHit hitInfo, dist, groundLayer, QueryTriggerInteraction.Ignore);
-
-
-        //if (!wasGround && isGround) jumpCount = 0;
     }
     public void JumpByPlatform(float customForce)
     {
@@ -92,11 +91,12 @@ public class PlayerJump : MonoBehaviour
 
         jumpRequested = false;
         Debug.Log($"jumpCount({jumpCount}), maxJumpCount({maxJumpCount})");
-        //Debug.Log($"now maxJump = {maxJumpCount}");
         Rigidbody rb = player.Rb;
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * player.JumpForce, ForceMode.Impulse);
         jumpCount++;
+        wasAscending = true;
+        OnJumpStarted?.Invoke();
     }
     void ApplyGravity(float dt)
     {
@@ -119,7 +119,5 @@ public class PlayerJump : MonoBehaviour
     {
         jumpCount = 0;
         wasGround = false;
-        //isGround = false;
-        //canJump = false;
     }
 }

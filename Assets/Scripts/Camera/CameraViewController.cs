@@ -5,8 +5,8 @@ public class CameraViewController : MonoBehaviour
     Transform target;
 
     Vector3 sideOffset = new Vector3(6, 1, 5);   // Side Left->Right
-    Vector3 topOffset = new Vector3(6, -2, 0);    // Down->Up
-    Vector3 downOffset = new Vector3(6, -2, 0);  // Up->Down
+    [SerializeField] Vector3 topOffset = new Vector3(6, 1, 5);    // Down->Up
+    Vector3 downOffset = new Vector3(6, 1, 5);  // Up->Down
     Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
 
     Vector3 targetPos;

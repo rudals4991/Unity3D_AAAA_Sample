@@ -40,7 +40,7 @@ public class PlayerInput : MonoBehaviour, InputSystem_Actions.IPlayerActions
     }
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
+        if (!context.started) return;
 #if UNITY_EDITOR
         // 에디터에서는 반드시 PC UI 체크
         if (IsPointerOverUI_PC())

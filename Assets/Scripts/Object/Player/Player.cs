@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
         if(canGyroMove) PlayerGyroMove.GyroMove(dt);
         if (canJump)
         {
-            if (PlayerInput.GetJump()) PlayerJump.SetCanJump();
+            if (PlayerInput.GetJump()) PlayerJump.RequestJump();
             PlayerJump.Jump(dt);
         }
     }

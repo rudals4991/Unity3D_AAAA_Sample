@@ -33,8 +33,6 @@ public class Player : MonoBehaviour
     bool canGyroMove;
     bool canJump;
 
-    public bool canTick = true;
-
     //초기화 메서드 (Awake, Start 대체)
     public void Initialize(GameMode mode)
     {
@@ -60,7 +58,6 @@ public class Player : MonoBehaviour
     //Update 대체
     public void Tick(float dt)
     {
-        if (!canTick) return;
         if(canAutoMove) PlayerAutoMove.AutoMove(dt);
         if(canGyroMove) PlayerGyroMove.GyroMove(dt);
         if (canJump)

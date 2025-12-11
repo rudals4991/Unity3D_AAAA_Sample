@@ -9,6 +9,7 @@ public class StageManager : MonoBehaviour, IManagerBase
     CharacterManager characterManager;
     bool isLoaded;
 
+
     public void Exit()
     {
         GameModeManager.OnGameModeChanged -= OnGameModeChanged;
@@ -35,6 +36,6 @@ public class StageManager : MonoBehaviour, IManagerBase
     }
     void StageStart()
     {
-        OnStageStarted.Invoke();
+        //OnStageStarted.Invoke();
     }
 }

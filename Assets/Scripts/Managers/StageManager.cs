@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour, IManagerBase
 {
     public int Priority => 3;
+    public static event Action OnStageStarted;
     CharacterManager characterManager;
-
     bool isLoaded;
 
     public void Exit()
@@ -33,7 +34,7 @@ public class StageManager : MonoBehaviour, IManagerBase
         characterManager.SetMode(mode);
     }
     void StageStart()
-    { 
-        //TODO: 카운트 다운 연출 넣기
+    {
+        OnStageStarted.Invoke();
     }
 }

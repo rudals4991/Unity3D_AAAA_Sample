@@ -4,67 +4,68 @@ using UnityEngine;
 public class PlatformPool : MonoBehaviour
 {
     [System.Serializable]
-    public class PlatformPrefabPair
+    public class PlatformPrefabs
     {
         public PlatformType type;
         public GameObject prefab;
-        public int poolSize = 10;
     }
-    [SerializeField] List<PlatformPrefabPair> prefabList = new();
+    [SerializeField] List<PlatformPrefabs> prefabList = new();
 
     Dictionary<PlatformType, Queue<GameObject>> poolDic = new();
-    Dictionary<PlatformType, GameObject> prefabDic = new();
+    Dictionary<PlatformType, List<GameObject>> prefabDic = new();
 
     void Awake()
     {
         DIContainer.Register(this);
-    }
-    public void Initialize()
-    {
-        foreach(var prefab in prefabList)
-        {
-            prefabDic[prefab.type] = prefab.prefab;
-            Queue<GameObject> q = new Queue<GameObject>();
-            poolDic[prefab.type] = q;
 
-            for (int i = 0; i < prefab.poolSize; i++)
-            {
-                GameObject obj = Instantiate(prefab.prefab, transform);
-                obj.SetActive(false);
-                q.Enqueue(obj);
-            }
+        foreach (PlatformType type in System.Enum.GetValues(typeof(PlatformType)))
+        {
+            prefabDic[type] = new List<GameObject>();
+            poolDic[type] = new Queue<GameObject>();
+        }
+        foreach (var p in prefabList)
+        {
+            prefabDic[p.type].Add(p.prefab);
         }
     }
-    public GameObject Get(PlatformType type, Vector3 pos, Quaternion rot)
+    public GameObject GetByRandom(PlatformType type, Vector3 pos, Quaternion rot)
     {
-        if (!poolDic.ContainsKey(type)) return null;
-        Queue<GameObject> queue = poolDic[type];
-        GameObject obj = queue.Count > 0 ? queue.Dequeue() : Instantiate(prefabDic[type], transform);
+        if (prefabDic[type].Count == 0) return null;
+        GameObject selected = prefabDic[type][Random.Range(0, prefabDic[type].Count)];
+        Queue<GameObject> q = poolDic[type];
+        GameObject obj;
+        if (q.Count > 0)
+        {
+            obj = q.Dequeue();
+        }
+        else
+        {
+            obj = Instantiate(selected, transform);
+            obj.GetComponent<Platform>().SetType(type);
+        }
         obj.transform.SetPositionAndRotation(pos, rot);
         obj.SetActive(true);
         return obj;
     }
-    public void Release(PlatformType type, GameObject obj)
+    public void Release(GameObject obj)
     {
-        obj.SetActive(false);
-        if (!poolDic.ContainsKey(type))
+        if (!obj.TryGetComponent(out Platform plat))
         {
             Destroy(obj);
             return;
         }
-        poolDic[type].Enqueue(obj);
+        obj.SetActive(false);
+        poolDic[plat.MyType].Enqueue(obj);
     }
     public void ReleaseAll()
     {
-        foreach (var kvp in poolDic)
+        foreach (Transform child in transform)
         {
-            foreach (Transform child in transform)
+            GameObject obj = child.gameObject;
+            if (obj.activeSelf && child.TryGetComponent(out Platform platform))
             {
-                if (child.gameObject.activeSelf)
-                {
-                    child.gameObject.SetActive(false);
-                    kvp.Value.Enqueue(child.gameObject);
-                }
+                obj.SetActive(false);
+                poolDic[platform.MyType].Enqueue(obj);
             }
         }
     }

@@ -22,14 +22,13 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     {
         if (player != null) Destroy(player.gameObject);
         player = Instantiate(playerPrefab).GetComponent<Player>();
-        
     }
     public void InitializePlayer(GameMode mode)
     {
-        CreatePlayer();
         if(controller == null) controller = DIContainer.Resolve<CameraViewController>();
         controller.SetTarget(player.transform); 
         player.Initialize(mode);
+        SetMode(mode);
     }
     public void SetMode(GameMode mode)
     { 

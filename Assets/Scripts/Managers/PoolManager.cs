@@ -11,7 +11,6 @@ public class PoolManager : MonoBehaviour, IManagerBase
 
     public void Exit()
     {
-        StageManager.OnStageStarted -= InitializePool;
         ReleaseAll();
     }
 
@@ -21,30 +20,22 @@ public class PoolManager : MonoBehaviour, IManagerBase
         yield return null;
         tilePool = DIContainer.Resolve<TilePool>();
         platformPool = DIContainer.Resolve<PlatformPool>();
-        // TODO: 스테이지 시작 이벤트 구독
-        StageManager.OnStageStarted -= InitializePool;
-        StageManager.OnStageStarted += InitializePool;
-    }
-    void InitializePool()
-    {
-        tilePool.Initialize();
-        platformPool.Initialize();
-    }
-    public GameObject GetPlatform(PlatformType type, Vector3 pos, Quaternion rot)
-    {
-        return platformPool.Get(type, pos, rot);
-    }
-    public void ReleasePlatform(PlatformType type, GameObject obj)
-    {
-        platformPool.Release(type, obj);
     }
     public GameObject GetTile(TileType type, Vector3 pos, Quaternion rot)
     {
-        return tilePool.Get(type, pos, rot);
+        return tilePool.GetByRandom(type, pos, rot);
     }
-    public void ReleaseTile(TileType tpye, GameObject obj)
+    public GameObject GetPlatform(PlatformType type, Vector3 pos, Quaternion rot)
+    {
+        return platformPool.GetByRandom(type, pos, rot);
+    }
+    public void ReleaseTile(GameObject obj)
     { 
-        tilePool.Release(tpye, obj);
+        tilePool.Release(obj);
+    }
+    public void ReleasePlatform(GameObject obj)
+    { 
+        platformPool.Release(obj);
     }
     public void ReleaseAll()
     {

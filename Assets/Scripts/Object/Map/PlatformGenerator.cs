@@ -1,30 +1,54 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlatformGenerator : MonoBehaviour
 {
-    PlatformPool pool;
+    PoolManager poolManager;
+
+    [Header("Spawn Settings")]
+    [SerializeField] int platformCount = 30;
+    [SerializeField] Vector3 boxSize = new Vector3(4f, 2f, 4f);
+    [SerializeField] float verticalOffset = 2f;
     void Awake()
     {
         DIContainer.Register(this);
     }
-    public void CreatePlatformByMode(GameMode mode, PlatformPool pool)
+    public void Initialize(PoolManager pool)
+    { 
+        poolManager = pool;
+    }
+    public (List<GameObject> objects, Vector3 endPos) Generate(Vector3 startPos, Vector3 dir)
     {
-        //TODO: 소환 위치 정하기 + 소환 로직 구현
-        this.pool = pool;
-        switch (mode)
+        List<GameObject> objs = new();
+        PlatformType type = ResolvePlatformType(dir);
+        GameObject first = poolManager.GetPlatform(type, startPos, Quaternion.identity);
+        objs.Add(first);
+        Vector3 lastPos = startPos;
+        for (int i = 1; i < platformCount; i++)
         {
-            case GameMode.SideView_ToTop: 
-                CreateToTop(PlatformType.ForJump, Vector3.zero, Quaternion.identity); break;
-            case GameMode.SideView_ToDown: 
-                CreateToDown(PlatformType.None, Vector3.zero,Quaternion.identity); break;
+            Vector3 newPos = GetRandomPosition(type, lastPos);
+            GameObject platform = poolManager.GetPlatform(type, newPos, Quaternion.identity);
+            objs.Add(platform);
+            lastPos = newPos;
         }
+        GameObject trigger = poolManager.GetPlatform(PlatformType.Trigger, lastPos, Quaternion.identity);
+        if (trigger.TryGetComponent(out TriggerPlatform tp)) tp.ResetFlag();
+        objs.Add(trigger);
+        return (objs, trigger.transform.position);
     }
-    void CreateToTop(PlatformType wantType, Vector3 wantPos, Quaternion wantRot)
+    PlatformType ResolvePlatformType(Vector3 dir)
     {
-        GameObject targetPlatform = pool.Get(wantType, wantPos, wantRot);
+        if (dir == Vector3.up) return PlatformType.ForJump;
+        if (dir == Vector3.down) return PlatformType.Normal;
+        return PlatformType.Normal;
     }
-    void CreateToDown(PlatformType wantType, Vector3 wantPos, Quaternion wantRot)
+    Vector3 GetRandomPosition(PlatformType type, Vector3 basePos)
     {
-        GameObject targetPlatform = pool.Get(wantType, wantPos, wantRot);
+        Vector3 half = boxSize / 2f;
+        float x = Random.Range(-half.x, half.x);
+        float z = Random.Range(-half.z, half.z);
+        float y = Random.Range(-half.y, half.y);
+        float centerY = type == PlatformType.ForJump ? verticalOffset : -verticalOffset;
+        return basePos + new Vector3(x, centerY + y, z);
     }
 }

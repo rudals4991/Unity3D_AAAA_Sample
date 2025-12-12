@@ -1,30 +1,41 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TileGenerator : MonoBehaviour
 {
-    TilePool pool;
+    [Header("Spawn Setting")]
+    [SerializeField] float tileLength = 50f;
+    [SerializeField] float linearTileCount = 3;
+
+    PoolManager poolManager;
+    TileType currentLinearType;
+
     void Awake()
     {
         DIContainer.Register(this);
     }
-    public void CreateTileByMode(GameMode mode, TilePool pool)
+    public void Initialize(PoolManager pool)
     {
-        //TODO: 소환 위치 정하기 + 소환 로직 구현
-        this.pool = pool;
-        switch (mode)
+        poolManager = pool;
+    }
+    public void SetLinearType(TileType type)
+    {
+        currentLinearType = type;
+    }
+    public (List<GameObject> objects, Vector3 endPos) Generate(Vector3 startPos, Vector3 dir)
+    {
+        List<GameObject> objs = new();
+        Vector3 pos = startPos;
+        for (int i = 0; i < linearTileCount; i++)
         {
-            case GameMode.SideView_ToRight: 
-                CreateForRight(TileType.Linear, Vector3.zero, Quaternion.identity); break;
-            case GameMode.BackView_ToForward: 
-                CreateForForward(TileType.Linear, Vector3.zero, Quaternion.identity); break;
+            GameObject tile = poolManager.GetTile(currentLinearType, pos, Quaternion.identity);
+            objs.Add(tile);
+            pos += dir * tileLength;
         }
-    }
-    void CreateForForward(TileType wantType, Vector3 wantPos, Quaternion wantRot)
-    {
-        GameObject targetPlatform = pool.Get(wantType, wantPos, wantRot);
-    }
-    void CreateForRight(TileType wantTpye, Vector3 wantPos, Quaternion wantRot)
-    {
-        GameObject targetPlatform = pool.Get(wantTpye, wantPos, wantRot);
+        GameObject trigger = poolManager.GetTile(TileType.Trigger, pos, Quaternion.identity);
+        if (trigger.TryGetComponent(out TriggerTile tt)) tt.ResetFlag();
+        objs.Add(trigger);
+        Vector3 endPos = pos + dir * tileLength;
+        return (objs, trigger.transform.position);
     }
 }

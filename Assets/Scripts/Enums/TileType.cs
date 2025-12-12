@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum TileType
 {
-    Linear,
-    Trigger,
-    Area
+    Linear_ToForward,
+    Linear_ToRight,
+    Trigger
 }

@@ -13,8 +13,10 @@ public class GameManager : MonoBehaviour
     #region ManagerClass
     GameModeManager gameModeManager;
     CharacterManager characterManager;
-    StageManager stageManager;
     UIManager uiManager;
+    MapManager mapManager;
+    PoolManager poolManager;
+    ScoreManager scoreManager;
     #endregion
     void Awake()
     {
@@ -40,8 +42,10 @@ public class GameManager : MonoBehaviour
         // 별도의 GameObject를 만드는게 아닌 GameManager Object에 AddComponet를 통해 추가합니다.
         gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
         characterManager ??= GetComponent<CharacterManager>() ?? gameObject.AddComponent<CharacterManager>();
-        stageManager ??= GetComponent<StageManager>() ?? gameObject.AddComponent<StageManager>();
         uiManager ??= GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
+        mapManager ??= GetComponent<MapManager>() ?? gameObject.AddComponent<MapManager>();
+        poolManager ??= GetComponent<PoolManager>() ?? gameObject.AddComponent<PoolManager>();
+        scoreManager ??= GetComponent<ScoreManager>() ?? gameObject.AddComponent<ScoreManager>();
         StartCoroutine(StartInitialize());
     }
 

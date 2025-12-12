@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum PlatformType
 {
-    None,
-    ForJump
+    Normal,
+    ForJump,
+    Trigger
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class TilePool : MonoBehaviour
 {
@@ -9,37 +10,49 @@ public class TilePool : MonoBehaviour
     {
         public TileType type;
         public GameObject prefab;
+        public int ID;
     }
     [SerializeField] List<TilePrefabs> prefabList = new();
 
-    Dictionary<TileType, Queue<GameObject>> poolDic = new();
-    Dictionary<TileType, List<GameObject>> prefabDic = new();
+    Dictionary<TileType, Dictionary<int, Queue<GameObject>>> poolDic = new();
+    Dictionary<TileType, List<TilePrefabs>> prefabDic = new();
 
     void Awake()
     {
         DIContainer.Register(this);
 
-        foreach (TileType type in System.Enum.GetValues(typeof(TileType)))
+        foreach (TileType type in Enum.GetValues(typeof(TileType)))
         {
-            prefabDic[type] = new List<GameObject>();
-            poolDic[type] = new Queue<GameObject>();
+            prefabDic[type] = new List<TilePrefabs>();
+            poolDic[type] = new Dictionary<int, Queue<GameObject>>();
         }
         foreach (var prefab in prefabList)
         {
-            prefabDic[prefab.type].Add(prefab.prefab);
+            prefabDic[prefab.type].Add(prefab);
         }
     }
     public GameObject GetByRandom(TileType type, Vector3 pos, Quaternion rot)
     {
-        if (prefabDic[type].Count == 0) return null;
-        GameObject selected = prefabDic[type][Random.Range(0, prefabDic[type].Count)];
-        Queue<GameObject> q = poolDic[type];
-        GameObject obj = null;
-        if (q.Count > 0) obj = q.Dequeue();
+        if (!prefabDic.TryGetValue(type, out var candidate) || candidate.Count == 0) return null;
+        TilePrefabs selected = candidate[UnityEngine.Random.Range(0, candidate.Count)];
+        int id = selected.ID;
+        if (!poolDic[type].TryGetValue(id, out Queue<GameObject> pool))
+        {
+            pool = new Queue<GameObject>();
+            poolDic[type][id] = pool;
+        }
+        GameObject obj;
+        if (pool.Count > 0) obj = pool.Dequeue();
         else
         {
-            obj = Instantiate(selected, transform);
-            obj.GetComponent<Tile>().SetType(type);
+            obj = Instantiate(selected.prefab, transform);
+            if (!obj.TryGetComponent(out Tile tile))
+            {
+                Destroy(obj);
+                return null;
+            }
+            tile.SetType(selected.type);
+            tile.SetID(id);
         }
         obj.transform.SetPositionAndRotation(pos, rot);
         obj.SetActive(true);
@@ -53,20 +66,40 @@ public class TilePool : MonoBehaviour
             Destroy(obj); 
             return;
         }
-        obj.SetActive(false);
-        poolDic[tile.MyType].Enqueue(obj);
+        if (!poolDic.TryGetValue(tile.MyType, out var idDic))
+        {
+            idDic = new Dictionary<int, Queue<GameObject>>();
+            poolDic[tile.MyType] = idDic;
+        }
+        if (!idDic.TryGetValue(tile.MyID, out var pool))
+        {
+            pool = new Queue<GameObject>();
+            idDic[tile.MyID] = pool;
+        }
+        pool.Enqueue(obj);
     }
     public void ReleaseAll()
     {
         foreach (Transform child in transform)
         {
             GameObject obj = child.gameObject;
-            
-            if (obj.activeSelf && child.TryGetComponent(out Tile tile))
+            if (!obj.activeSelf) continue;
+            if (obj.TryGetComponent(out Tile tile))
             {
                 obj.SetActive(false);
-                poolDic[tile.MyType].Enqueue(obj);
+                if (!poolDic.TryGetValue(tile.MyType, out var idDic))
+                {
+                    idDic = new Dictionary<int, Queue<GameObject>>();
+                    poolDic[tile.MyType] = idDic;
+                }
+                if (!idDic.TryGetValue(tile.MyID, out var pool))
+                {
+                    pool = new Queue<GameObject>();
+                    idDic[tile.MyID] = pool;
+                }
+                pool.Enqueue(obj);
             }
+            else Destroy(obj);
         }
     }
 }

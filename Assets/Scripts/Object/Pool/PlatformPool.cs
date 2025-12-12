@@ -34,10 +34,7 @@ public class PlatformPool : MonoBehaviour
         GameObject selected = prefabDic[type][Random.Range(0, prefabDic[type].Count)];
         Queue<GameObject> q = poolDic[type];
         GameObject obj;
-        if (q.Count > 0)
-        {
-            obj = q.Dequeue();
-        }
+        if (q.Count > 0) obj = q.Dequeue();
         else
         {
             obj = Instantiate(selected, transform);

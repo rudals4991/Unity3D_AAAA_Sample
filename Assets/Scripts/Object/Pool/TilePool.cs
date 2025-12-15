@@ -66,6 +66,7 @@ public class TilePool : MonoBehaviour
             Destroy(obj); 
             return;
         }
+        obj.SetActive(false);
         if (!poolDic.TryGetValue(tile.MyType, out var idDic))
         {
             idDic = new Dictionary<int, Queue<GameObject>>();

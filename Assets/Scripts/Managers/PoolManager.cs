@@ -23,10 +23,12 @@ public class PoolManager : MonoBehaviour, IManagerBase
     }
     public GameObject GetTile(TileType type, Vector3 pos, Quaternion rot)
     {
+        if(tilePool == null) tilePool = DIContainer.Resolve<TilePool>();
         return tilePool.GetByRandom(type, pos, rot);
     }
     public GameObject GetPlatform(PlatformType type, Vector3 pos, Quaternion rot)
     {
+        if (platformPool == null) platformPool = DIContainer.Resolve<PlatformPool>();
         return platformPool.GetByRandom(type, pos, rot);
     }
     public void ReleaseTile(GameObject obj)
@@ -39,6 +41,7 @@ public class PoolManager : MonoBehaviour, IManagerBase
     }
     public void ReleaseAll()
     {
+        if (tilePool == null || platformPool == null) return;
         tilePool.ReleaseAll();
         platformPool.ReleaseAll();
     }

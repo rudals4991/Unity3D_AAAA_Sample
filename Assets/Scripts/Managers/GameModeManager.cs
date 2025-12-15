@@ -5,8 +5,17 @@ using UnityEngine;
 public class GameModeManager : MonoBehaviour, IManagerBase
 {
     public static event Action<GameMode> OnGameModeChanged;
-    public static event Action OnFirstStageStarted;
-    public int Priority => 1;
+    public int Priority => 7;
+    readonly GameMode[] cycle =
+    {
+        GameMode.SideView_ToRight,
+        GameMode.BackView_ToForward,
+        GameMode.SideView_ToDown,
+        GameMode.SideView_ToRight,
+        GameMode.BackView_ToForward,
+        GameMode.SideView_ToTop,
+    };
+    int index = 0;
     GameMode currentMode;
     bool isFirstMode = true;
     CharacterManager characterManager;
@@ -22,30 +31,39 @@ public class GameModeManager : MonoBehaviour, IManagerBase
         characterManager = DIContainer.Resolve<CharacterManager>();
         mapManager = DIContainer.Resolve<MapManager>();
     }
+    public void StartCycle(GameMode? start = null)
+    {
+        if (start.HasValue)
+        {
+            int found = Array.IndexOf(cycle, start.Value);
+            index = found >= 0 ? found : 0;
+        }
+        else index = 0;
+        isFirstMode = true;
+        SetMode(cycle[index]);
+    }
+    public void AdvanceMode()
+    {
+        index = (index + 1) % cycle.Length;
+        SetMode(cycle[index]);
+    }
     public void SetMode(GameMode mode)
     {
+        Debug.Log("GameModeManager Set Mode");
         currentMode = mode;
         if (isFirstMode)
         {
-            FirstMode(currentMode);
+            if (characterManager == null) Debug.Log("Null");
+            characterManager.CreatePlayer();
+            characterManager.InitializePlayer(mode);
+            mapManager.PrepareForMode(mode);
             isFirstMode = false;
         }
         else
         {
-            ModeChange(currentMode);
+            characterManager.SetMode(mode);
+            mapManager.PrepareForMode(mode);
         }
         OnGameModeChanged?.Invoke(currentMode);
-    }
-    void FirstMode(GameMode mode)
-    {
-        mapManager.PrepareForMode(mode);
-        characterManager.CreatePlayer();
-        characterManager.InitializePlayer(mode);
-        OnFirstStageStarted?.Invoke();
-    }
-    void ModeChange(GameMode mode)
-    {
-        mapManager.PrepareForMode(mode);
-        characterManager.SetMode(mode);
     }
 }

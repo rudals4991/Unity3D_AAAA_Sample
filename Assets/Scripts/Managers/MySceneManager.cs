@@ -40,6 +40,7 @@ public class MySceneManager : MonoBehaviour
         yield return SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Single);
         OnSceneChanged?.Invoke(scene);
         yield return StartCoroutine(LoadAdditiveScene());
+        if (scene == SceneList.GamePlay) DIContainer.Resolve<GameModeManager>().StartCycle(GameMode.SideView_ToRight);
     }
     string ConvertSceneList(SceneList scene)
     {

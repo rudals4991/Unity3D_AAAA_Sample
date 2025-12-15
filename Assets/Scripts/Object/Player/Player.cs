@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     //초기화 메서드 (Awake, Start 대체)
     public void Initialize(GameMode mode)
     {
+        DIContainer.Register(this);
         Rb = GetComponent<Rigidbody>();
         Capsule = GetComponent<CapsuleCollider>();
 

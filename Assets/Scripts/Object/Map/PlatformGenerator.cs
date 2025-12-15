@@ -32,7 +32,6 @@ public class PlatformGenerator : MonoBehaviour
             lastPos = newPos;
         }
         GameObject trigger = poolManager.GetPlatform(PlatformType.Trigger, lastPos, Quaternion.identity);
-        if (trigger.TryGetComponent(out TriggerPlatform tp)) tp.ResetFlag();
         objs.Add(trigger);
         return (objs, trigger.transform.position);
     }

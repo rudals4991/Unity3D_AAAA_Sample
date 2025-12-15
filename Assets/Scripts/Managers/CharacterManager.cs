@@ -21,7 +21,7 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     public void CreatePlayer()
     {
         if (player != null) Destroy(player.gameObject);
-        player = Instantiate(playerPrefab).GetComponent<Player>();
+        player = Instantiate(playerPrefab,new Vector3(0,2,0),Quaternion.identity).GetComponent<Player>();
     }
     public void InitializePlayer(GameMode mode)
     {
@@ -31,7 +31,8 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         SetMode(mode);
     }
     public void SetMode(GameMode mode)
-    { 
+    {
+        Debug.Log("CharacterManager Set Mode");
         player.ApplyGameMode(mode);
     }
     public void Tick(float dt)

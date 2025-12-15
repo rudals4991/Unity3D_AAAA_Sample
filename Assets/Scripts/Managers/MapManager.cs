@@ -9,33 +9,28 @@ public class MapManager : MonoBehaviour,IManagerBase
     PoolManager pool;
     public int Priority => 6;
 
-    Vector3 nextSpawnPos = Vector3.zero;
-    Vector3 currentDirection = Vector3.forward; 
-    List<MapSegment> activeSegments = new();
+    Vector3 currentDirection = Vector3.forward;
+    List<GameObject> activeObjects = new();
     bool isInitialized;
 
     public void Exit()
     {
         ClearAll();
     }
-
     public IEnumerator Initialize()
     {
         DIContainer.Register(this);
         yield return null;
         pool = DIContainer.Resolve<PoolManager>();
-        platform = DIContainer.Resolve<PlatformGenerator>();
-        tile = DIContainer.Resolve<TileGenerator>();
     }
-
     public void PrepareForMode(GameMode mode)
     {
         currentDirection = ResolveDirection(mode);
 
-        if (!isInitialized)
-            InitializeGenerators();
-
-        GenerateNextSegment(mode);
+        if (!isInitialized) InitializeGenerators();
+        ClearAll();
+        Vector3 anchor = GetAnchorPos(mode);
+        GenerateOneSegment(mode,anchor);
     }
     Vector3 ResolveDirection(GameMode mode)
     {
@@ -56,76 +51,39 @@ public class MapManager : MonoBehaviour,IManagerBase
         tile.Initialize(pool);
         isInitialized = true;
     }
-    public void GenerateNextSegment(GameMode mode)
+    void GenerateOneSegment(GameMode mode, Vector3 startPos)
     {
-        List<GameObject> objs;
-        float startAxis = GetAxisValue(nextSpawnPos);
-        float endAxis = startAxis;
         if (currentDirection == Vector3.forward)
         {
-            if (mode == GameMode.BackView_ToForward) tile.SetLinearType(TileType.Linear_ToForward);
-            else tile.SetLinearType(TileType.Linear_ToRight);
-            var result = tile.Generate(nextSpawnPos, currentDirection);
-            objs = result.objects;
-            nextSpawnPos = result.endPos;
-            endAxis = GetAxisValue(result.endPos);
+            // Back/Right는 둘 다 z축 진행, 타일 타입만 다름
+            tile.SetLinearType(mode == GameMode.BackView_ToForward ? TileType.Linear_ToForward : TileType.Linear_ToRight);
+
+            var result = tile.Generate(startPos, currentDirection);
+            activeObjects = result.objects;
         }
         else
         {
-            var result = platform.Generate(nextSpawnPos, currentDirection);
-            objs = result.objects;
-            nextSpawnPos = result.endPos;
-            endAxis = GetAxisValue(result.endPos);
-        }
-        activeSegments.Add(new MapSegment(objs, startAxis, endAxis));
-        CleanupOldSegments();
-    }
-    void CleanupOldSegments()
-    {
-        float playerAxis = GetPlayerAxis();
-        for (int i = activeSegments.Count - 1; i >= 0; i--)
-        {
-            if (playerAxis - activeSegments[i].endAxis > 80f) 
-            {
-                ReleaseSegment(activeSegments[i]);
-                activeSegments.RemoveAt(i);
-            }
+            var result = platform.Generate(startPos, currentDirection);
+            activeObjects = result.objects;
         }
     }
-
-    float GetPlayerAxis()
+    Vector3 GetAnchorPos(GameMode mode)
     {
         Player player = DIContainer.Resolve<Player>();
-        if (player == null) return 0;
-        return currentDirection == Vector3.forward ?
-            player.transform.position.z :
-            player.transform.position.y;
-    }
-
-    float GetAxisValue(Vector3 pos)
-    {
-        return currentDirection == Vector3.forward ? pos.z : pos.y;
-    }
-
-    void ReleaseSegment(MapSegment seg)
-    {
-        foreach (var obj in seg.objects)
-        {
-            if (obj.TryGetComponent<Tile>(out _)) pool.ReleaseTile(obj);
-            else pool.ReleasePlatform(obj);
-        }
+        if (player == null) return Vector3.zero;
+        Vector3 p = player.transform.position;
+        if (ResolveDirection(mode) == Vector3.forward) return new Vector3(0f, 0f, p.z);
+        return p;
     }
     public void ClearAll()
     {
-        foreach (var seg in activeSegments)
+        if (activeObjects == null || activeObjects.Count == 0) return;
+        foreach (var obj in activeObjects)
         {
-            ReleaseSegment(seg);
+            if (obj == null) continue;
+            if (obj.TryGetComponent<Tile>(out _)) pool.ReleaseTile(obj);
+            else pool.ReleasePlatform(obj);
         }
-        activeSegments.Clear();
-        nextSpawnPos = Vector3.zero;
-    }
-    public void OnTriggerReached()
-    {
-        // GameModeManager가 SetMode를 다시 호출할 것이므로 여기선 아무것도 안함
+        activeObjects.Clear();
     }
 }

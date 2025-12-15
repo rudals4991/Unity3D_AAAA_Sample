@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapSegment : MonoBehaviour
+public class MapSegment
 {
     public List<GameObject> objects;
     public float startAxis;

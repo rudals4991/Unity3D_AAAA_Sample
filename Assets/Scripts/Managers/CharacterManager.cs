@@ -7,7 +7,7 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     [SerializeField] GameObject playerPrefab;
     Player player;
     CameraViewController controller;
-    public int Priority => 2;
+    public int Priority => 3;
 
     public void Exit()
     {
@@ -29,10 +29,10 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         controller.SetTarget(player.transform); 
         player.Initialize(mode);
         SetMode(mode);
+        DIContainer.Resolve<CountManager>().StartFirstCountDown();
     }
     public void SetMode(GameMode mode)
     {
-        Debug.Log("CharacterManager Set Mode");
         player.ApplyGameMode(mode);
     }
     public void Tick(float dt)

@@ -7,6 +7,9 @@ public class MySceneManager : MonoBehaviour
 {
     public static MySceneManager Instance { get; private set; }
     public static event Action<SceneList> OnSceneChanged;
+    public SceneList CurrentScene { get; private set; } = SceneList.Title;
+    SceneList currentContent = SceneList.Title;
+    bool isLoading = false;
     
     void Awake()
     {
@@ -18,30 +21,69 @@ public class MySceneManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    void Start()
+    IEnumerator Start()
     {
-        LoadSingleScene(SceneList.Title);
+        yield return StartCoroutine(UISceneLoaded());
+        yield return StartCoroutine(ChangeContentScene(SceneList.Title));
     }
-    public void LoadSingleScene(SceneList scene)
+    public void LoadScene(SceneList scene)
     {
-        StartCoroutine(StartSceneRoutine(scene));
+        if (isLoading) return;
+        StartCoroutine(ChangeContentScene(scene));
     }
-    IEnumerator LoadAdditiveScene()
+    IEnumerator UISceneLoaded()
     {
-        string UIScene = ConvertSceneList(SceneList.UI);
-        if (UIScene == null) yield break;
-        if (!SceneManager.GetSceneByName(UIScene).isLoaded)
-            yield return SceneManager.LoadSceneAsync(UIScene, LoadSceneMode.Additive);
+        string uiName = ConvertSceneList(SceneList.UI);
+        if (string.IsNullOrEmpty(uiName)) yield break;
+
+        var uiScene = SceneManager.GetSceneByName(uiName);
+        if (!uiScene.isLoaded)
+        {
+            yield return SceneManager.LoadSceneAsync(uiName, LoadSceneMode.Additive);
+        }
     }
-    IEnumerator StartSceneRoutine(SceneList scene)
+    IEnumerator ChangeContentScene(SceneList next)
     {
-        string targetScene = ConvertSceneList(scene);
-        if(targetScene == null) yield break;
-        yield return SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Single);
-        OnSceneChanged?.Invoke(scene);
-        yield return StartCoroutine(LoadAdditiveScene());
-        if (scene == SceneList.GamePlay) DIContainer.Resolve<GameModeManager>().StartCycle(GameMode.SideView_ToRight);
+        if (isLoading) yield break;
+        isLoading = true;
+        if (next == SceneList.UI)
+        {
+            isLoading = false;
+            yield break;
+        }
+        if (currentContent != next)
+        {
+            string curName = ConvertSceneList(currentContent);
+            if (!string.IsNullOrEmpty(curName))
+            {
+                var curScene = SceneManager.GetSceneByName(curName);
+                if (curScene.isLoaded)
+                {
+                    yield return SceneManager.UnloadSceneAsync(curName);
+                }
+            }
+        }
+        string nextName = ConvertSceneList(next);
+        if (string.IsNullOrEmpty(nextName))
+        {
+            isLoading = false;
+            yield break;
+        }
+        var nextScene = SceneManager.GetSceneByName(nextName);
+        if (!nextScene.isLoaded)
+        {
+            yield return SceneManager.LoadSceneAsync(nextName, LoadSceneMode.Additive);
+            nextScene = SceneManager.GetSceneByName(nextName);
+        }
+        if (nextScene.IsValid() && nextScene.isLoaded) SceneManager.SetActiveScene(nextScene);
+        currentContent = next;
+        CurrentScene = next;
+        OnSceneChanged?.Invoke(next);
+        if (next == SceneList.GamePlay)
+            DIContainer.Resolve<GameModeManager>().StartCycle(GameMode.SideView_ToRight);
+        isLoading = false;
     }
+    public string UISceneName => ConvertSceneList(SceneList.UI);
     string ConvertSceneList(SceneList scene)
     {
         switch (scene)

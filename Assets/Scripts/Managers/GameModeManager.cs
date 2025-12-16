@@ -49,7 +49,6 @@ public class GameModeManager : MonoBehaviour, IManagerBase
     }
     public void SetMode(GameMode mode)
     {
-        Debug.Log("GameModeManager Set Mode");
         currentMode = mode;
         if (isFirstMode)
         {

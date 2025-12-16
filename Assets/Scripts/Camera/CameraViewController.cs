@@ -4,17 +4,17 @@ public class CameraViewController : MonoBehaviour
 {
     Transform target;
 
-    Vector3 sideOffset = new Vector3(6, 1, 5);   // Side Left->Right
-    [SerializeField] Vector3 topOffset = new Vector3(6, 1, 5);    // Down->Up
-    Vector3 downOffset = new Vector3(6, 1, 5);  // Up->Down
-    Vector3 backOffset = new Vector3(0, 3, -6);   // BackView
+    Vector3 sideOffset = new Vector3(6, 0, 6);   // Side Left->Right
+    Vector3 topOffset = new Vector3(0, 0.2f, -11);    // Down->Up
+    Vector3 downOffset = new Vector3(0, 0.2f, -11);  // Up->Down
+    Vector3 backOffset = new Vector3(0, 3.5f, -4);   // BackView
 
     Vector3 targetPos;
     Quaternion targetRot;
     bool first = true;
     GameMode gameMode;
 
-    void Start()
+    void Awake()
     {
         DIContainer.Register(this);
         GameModeManager.OnGameModeChanged -= SetCameraMode;
@@ -49,10 +49,10 @@ public class CameraViewController : MonoBehaviour
         switch (gameMode)
         {
             case GameMode.BackView_ToForward: targetRot = Quaternion.Euler(20f, 0f, 0f); break;
+            case GameMode.SideView_ToTop: targetRot = Quaternion.Euler(15f, 0f, 0f); break;
+            case GameMode.SideView_ToDown: targetRot = Quaternion.Euler(15f, 0f, 0f); break;
 
-            case GameMode.SideView_ToRight:
-            case GameMode.SideView_ToTop:
-            case GameMode.SideView_ToDown:targetRot = Quaternion.Euler(0f, -90f, 0f); break;
+            case GameMode.SideView_ToRight: targetRot = Quaternion.Euler(0f, -90f, 0f); break;
         }
     }
     void ApplyCamera()

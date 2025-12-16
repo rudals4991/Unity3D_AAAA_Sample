@@ -11,12 +11,13 @@ public class GameManager : MonoBehaviour
 
     //Manager 맴버
     #region ManagerClass
-    GameModeManager gameModeManager;
+    CountManager countManager;
+    PauseManager pauseManager;
     CharacterManager characterManager;
     UIManager uiManager;
-    MapManager mapManager;
     PoolManager poolManager;
-    ScoreManager scoreManager;
+    MapManager mapManager;
+    GameModeManager gameModeManager;
     #endregion
     void Awake()
     {
@@ -32,6 +33,11 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (!isInitialized) return;
+        if (pauseManager.IsHardPaused) return;
+        float dtUnscaled = Time.unscaledDeltaTime;
+        countManager.Tick(dtUnscaled);
+        if (pauseManager.BlockGameplayTick) return;
+        if (!countManager.IsGameActive) return;
         float dt = Time.deltaTime;
         characterManager.Tick(dt);
     }
@@ -40,12 +46,14 @@ public class GameManager : MonoBehaviour
     void GetAndAdd()
     {
         // 별도의 GameObject를 만드는게 아닌 GameManager Object에 AddComponet를 통해 추가합니다.
-        gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
+        countManager ??= GetComponent<CountManager>() ?? gameObject.AddComponent<CountManager>();
+        pauseManager ??= GetComponent<PauseManager>() ?? gameObject.AddComponent<PauseManager>();
         characterManager ??= GetComponent<CharacterManager>() ?? gameObject.AddComponent<CharacterManager>();
         uiManager ??= GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
-        mapManager ??= GetComponent<MapManager>() ?? gameObject.AddComponent<MapManager>();
         poolManager ??= GetComponent<PoolManager>() ?? gameObject.AddComponent<PoolManager>();
-        scoreManager ??= GetComponent<ScoreManager>() ?? gameObject.AddComponent<ScoreManager>();
+        mapManager ??= GetComponent<MapManager>() ?? gameObject.AddComponent<MapManager>();
+        gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
+
         StartCoroutine(StartInitialize());
     }
 

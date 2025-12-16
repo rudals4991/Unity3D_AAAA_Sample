@@ -21,7 +21,7 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     public void CreatePlayer()
     {
         if (player != null) Destroy(player.gameObject);
-        player = Instantiate(playerPrefab,new Vector3(0,2,0),Quaternion.identity).GetComponent<Player>();
+        player = Instantiate(playerPrefab,new Vector3(0,2,-20),Quaternion.identity).GetComponent<Player>();
     }
     public void InitializePlayer(GameMode mode)
     {

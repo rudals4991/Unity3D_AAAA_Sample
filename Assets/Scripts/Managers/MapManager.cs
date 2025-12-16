@@ -12,6 +12,7 @@ public class MapManager : MonoBehaviour,IManagerBase
     Vector3 currentDirection = Vector3.forward;
     List<GameObject> activeObjects = new();
     bool isInitialized;
+    bool isFirst = true;
 
     public void Exit()
     {
@@ -69,6 +70,11 @@ public class MapManager : MonoBehaviour,IManagerBase
     }
     Vector3 GetAnchorPos(GameMode mode)
     {
+        if (isFirst)
+        { 
+            isFirst = false;
+            return Vector3.zero;
+        }
         Player player = DIContainer.Resolve<Player>();
         if (player == null) return Vector3.zero;
         Vector3 p = player.transform.position;

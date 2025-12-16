@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3484452210790339388}
   - component: {fileID: 9143016550705536779}
   - component: {fileID: 1906577389447517193}
+  - component: {fileID: 2693634925813835752}
   - component: {fileID: -1875287257888801435}
   m_Layer: 3
   m_Name: Platform_Trigger
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -171.10574, y: 1.35, z: 9.95}
-  m_LocalScale: {x: 3, y: 0.7, z: 3}
+  m_LocalScale: {x: 3.5, y: 0.5, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,6 +113,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2693634925813835752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8568164999955835703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce373dc5c21a4642ba4453a2558f6ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Platform
 --- !u!114 &-1875287257888801435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,4 +137,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18480dfa5807d4a4bb7222d801f912ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TriggerPlatform
-  nextMode: 0

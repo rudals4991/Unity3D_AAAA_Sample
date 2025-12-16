@@ -18,6 +18,6 @@ MonoBehaviour:
   deadZone: 0.1
   sensitivity: 1.2
   jumpForce: 7
-  fallMultiplier: 2
+  fallMultiplier: 1.2
   maxJumpCount_BackView: 1
   maxJumpCount_SideView: 2

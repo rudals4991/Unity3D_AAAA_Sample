@@ -26,7 +26,6 @@ public class TileGenerator : MonoBehaviour
     {
         if (poolManager == null)
         {
-            // 여기 로그가 뜨면 “Initialize가 안 됐다”가 확정입니다.
             Debug.LogError("[TileGenerator] poolManager is null. Did you call TileGenerator.Initialize(pool) after GamePlay scene loaded?");
             return (new List<GameObject>(), startPos);
         }

@@ -44,6 +44,8 @@ public class PlatformGenerator : MonoBehaviour
     Vector3 GetRandomPosition(PlatformType type, Vector3 basePos)
     {
         Vector3 half = boxSize / 2f;
+
+
         float x = Random.Range(-half.x, half.x);
         float z = Random.Range(-half.z, half.z);
         float y = Random.Range(-half.y, half.y);

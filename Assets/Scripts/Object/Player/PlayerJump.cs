@@ -96,7 +96,8 @@ public class PlayerJump : MonoBehaviour
         rb.AddForce(Vector3.up * player.JumpForce, ForceMode.Impulse);
         jumpCount++;
         wasAscending = true;
-        OnJumpStarted?.Invoke();
+        if (jumpCount == 1) OnJumpStarted?.Invoke();
+        else if (jumpCount == 2) player.PlayerAnimation.SetDoubleJump();
     }
     void ApplyGravity(float dt)
     {

@@ -10,6 +10,6 @@ public class PlayerAutoMove : MonoBehaviour
     }
     public void AutoMove(float dt)
     {
-        transform.position += transform.forward * player.MoveSpeed * dt;
+        transform.position += transform.forward * player.CurrentMoveSpeed * dt;
     }
 }

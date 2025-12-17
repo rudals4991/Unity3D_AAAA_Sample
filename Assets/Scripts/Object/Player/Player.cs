@@ -7,7 +7,8 @@ public class Player : MonoBehaviour
 
     // Player 오브젝트 컴포넌트
     public Rigidbody Rb { get; private set; }                  
-    public CapsuleCollider Capsule { get; private set; }     
+    public CapsuleCollider Capsule { get; private set; }    
+    public Animator Animator { get; private set; }
 
     // Player 오브젝트 기능 컴포넌트(외부 접근용)          
     public PlayerAutoMove PlayerAutoMove { get; private set; }
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour
     public PlayerJump PlayerJump {get; private set;}
     public PlayerInput PlayerInput { get; private set; }
     public PlayerCollisionController CollisionController { get; private set; }
+    public PlayerAnimation PlayerAnimation { get; private set; }
 
     // Player 오브젝트 데이터 값(외부 접근용)
     public float MoveSpeed => data.moveSpeed;                   //이동속도 초기세팅
@@ -33,27 +35,33 @@ public class Player : MonoBehaviour
     bool canGyroMove;
     bool canJump;
 
+    Vector3 prevPos;
+
     //초기화 메서드 (Awake, Start 대체)
     public void Initialize(GameMode mode)
     {
         DIContainer.Register(this);
         Rb = GetComponent<Rigidbody>();
         Capsule = GetComponent<CapsuleCollider>();
+        Animator = GetComponent<Animator>();
 
         PlayerAutoMove = GetComponent<PlayerAutoMove>();
         PlayerGyroMove = GetComponent<PlayerGyroMove>();
         PlayerJump = GetComponent<PlayerJump>();
         PlayerInput = GetComponent<PlayerInput>();
         CollisionController = GetComponent<PlayerCollisionController>();
+        PlayerAnimation = GetComponent<PlayerAnimation>();
 
         PlayerAutoMove.Initialize(this);
         PlayerGyroMove.Initialize(this);
         PlayerJump.Initialize(this);
         PlayerInput.Initialize(this);
         CollisionController.Initialize(this);
+        PlayerAnimation.Initialize(this);
 
         CurrentMoveSpeed = MoveSpeed;
         ApplyGameMode(mode);
+        prevPos = transform.position;
     }
 
     //Update 대체
@@ -66,12 +74,16 @@ public class Player : MonoBehaviour
             if (PlayerInput.GetJump()) PlayerJump.RequestJump();
             PlayerJump.Jump(dt);
         }
+        Vector3 delta = transform.position - prevPos;
+        delta.y = 0f;
+        bool isMoving = delta.sqrMagnitude > 0.00001f;
+        PlayerAnimation.SetMoveAnim(isMoving);
+        prevPos = transform.position;
     }
 
     //게임 모드별 기능 적용 메서드
     public void ApplyGameMode(GameMode gameMode)
     {
-        Debug.Log($"mode : {gameMode}");
         switch (gameMode)
         {
             case GameMode.BackView_ToForward:
@@ -101,6 +113,7 @@ public class Player : MonoBehaviour
                     PlayerGyroMove.SetGyroMode(GyroMode.Forward);
                 } break;
         }
+        prevPos = transform.position;
     }
     // 속도 조절용 메서드
     public void SetMoveSpeed(float speed)

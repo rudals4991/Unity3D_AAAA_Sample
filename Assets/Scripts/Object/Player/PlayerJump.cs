@@ -90,7 +90,6 @@ public class PlayerJump : MonoBehaviour
         if (!CanJump()) return;
 
         jumpRequested = false;
-        Debug.Log($"jumpCount({jumpCount}), maxJumpCount({maxJumpCount})");
         Rigidbody rb = player.Rb;
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * player.JumpForce, ForceMode.Impulse);

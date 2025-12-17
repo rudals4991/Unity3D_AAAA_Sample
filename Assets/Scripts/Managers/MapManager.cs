@@ -29,6 +29,7 @@ public class MapManager : MonoBehaviour,IManagerBase
         currentDirection = ResolveDirection(mode);
 
         if (!isInitialized) InitializeGenerators();
+        if (currentDirection == Vector3.forward) platform.ClearBackground();
         ClearAll();
         Vector3 anchor = GetAnchorPos(mode);
         GenerateOneSegment(mode,anchor);
@@ -70,7 +71,7 @@ public class MapManager : MonoBehaviour,IManagerBase
     }
     Vector3 GetAnchorPos(GameMode mode)
     {
-        if (isFirst)
+        if (isFirst && mode == GameMode.SideView_ToRight)
         { 
             isFirst = false;
             return Vector3.zero;

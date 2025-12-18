@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     public PlayerCollisionController CollisionController { get; private set; }
     public PlayerAnimation PlayerAnimation { get; private set; }
 
-    // Player ������Ʈ ������ ��(�ܺ� ���ٿ�)
     public float MoveSpeed => data.moveSpeed;                  
     public float CurrentMoveSpeed { get; private set; }        
     public float GyroSpeedLeftRight => data.gyroSpeedLeftRight;
@@ -26,6 +25,7 @@ public class Player : MonoBehaviour
     public float JumpForce => data.jumpForce;                   
     public int JumpCount_Back => data.maxJumpCount_BackView;   
     public int JumpCount_Side => data.maxJumpCount_SideView;   
+    public GameMode CurrentMode { get; private set; }
     
     bool canAutoMove;
     bool canGyroMove;
@@ -77,6 +77,8 @@ public class Player : MonoBehaviour
 
     public void ApplyGameMode(GameMode gameMode)
     {
+        CurrentMode = gameMode;
+        CollisionController.SetDefault();
         transform.rotation = Quaternion.identity;
         switch (gameMode)
         {

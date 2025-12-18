@@ -13,13 +13,19 @@ public class PlayerCollisionController : MonoBehaviour
         player.PlayerJump.OnJumpStarted += HandleJumpStart;
         player.PlayerJump.OnJumpApex += HandleJumpApex;
     }
+    public void SetDefault()
+    {
+        player.Capsule.enabled = true;
+    }
     void HandleJumpStart()
     {
-        player.Capsule.enabled = false;  
+        if(player.CurrentMode == GameMode.SideView_ToTop || player.CurrentMode == GameMode.SideView_ToDown)
+            player.Capsule.enabled = false;  
     }
 
     void HandleJumpApex()
     {
-        player.Capsule.enabled = true;  
+        if (player.CurrentMode == GameMode.SideView_ToTop || player.CurrentMode == GameMode.SideView_ToDown)
+            player.Capsule.enabled = true;  
     }
 }

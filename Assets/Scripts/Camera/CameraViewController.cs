@@ -4,7 +4,7 @@ public class CameraViewController : MonoBehaviour
 {
     Transform target;
     [Header("Offsets")]
-    [SerializeField] Vector3 sideOffset = new Vector3(6, 0, 6);        // Side Left->Right
+    [SerializeField] Vector3 sideOffset = new Vector3(6, 2, 6);        // Side Left->Right
     [SerializeField] Vector3 topOffset = new Vector3(0, 0.2f, -11);   // Down->Up
     [SerializeField] Vector3 downOffset = new Vector3(0, 0.2f, -11);   // Up->Down
     [SerializeField] Vector3 backOffset = new Vector3(0, 3.5f, -4);    // BackView
@@ -23,6 +23,8 @@ public class CameraViewController : MonoBehaviour
 
     float speedScale = 0.2f;
     public float CameraSpeedScale { get; private set; } = 1f;
+    bool useInitialYCalibration = true;
+    float expectedGroundY = 0f;
 
     bool hasInitialized = false;
     bool isTransitioning = false;
@@ -31,14 +33,17 @@ public class CameraViewController : MonoBehaviour
     Vector3 fromOffset, toOffset;
     Quaternion fromRot, toRot;
 
+    float sideRightBaseY;
+    bool sideRightBaseYValid = false;
+    float initialYBias = 0f;
+    bool initialYBiasReady = false;
+
     void Awake()
     {
         DIContainer.Register(this);
         GameModeManager.OnGameModeChanged -= SetCameraMode;
         GameModeManager.OnGameModeChanged += SetCameraMode;
     }
-
-
     public void SetCameraSpeedScale(float scale)
     {
         CameraSpeedScale = scale;
@@ -55,16 +60,36 @@ public class CameraViewController : MonoBehaviour
     {
         target = t;
         hasInitialized = false;
+        sideRightBaseYValid = false;
+        if (useInitialYCalibration && target != null)
+        {
+            initialYBias = target.position.y - expectedGroundY;
+            initialYBiasReady = true;
+        }
+        else
+        {
+            initialYBias = 0f;
+            initialYBiasReady = false;
+        }
     }
     public void SetCameraMode(GameMode mode)
     {
         gameMode = mode;
         if (target == null) return;
+        if (mode == GameMode.SideView_ToRight)
+        {
+            float y = target.position.y + sideOffset.y;
+            if (useInitialYCalibration && initialYBiasReady && !hasInitialized) y -= initialYBias;
+            sideRightBaseY = y;
+            sideRightBaseYValid = true;
+        }
+        else sideRightBaseYValid = false;
         Vector3 nextOffset = GetOffset(mode);
         Quaternion nextRot = GetRotation(mode);
         if (!hasInitialized)
         {
             targetPos = target.position + nextOffset;
+            if (useInitialYCalibration && initialYBiasReady) targetPos.y -= initialYBias;
             targetRot = nextRot;
             transform.position = targetPos;
             transform.rotation = targetRot;
@@ -81,7 +106,7 @@ public class CameraViewController : MonoBehaviour
 
         if (isTransitioning)
         {
-            transitionElapsed += Time.deltaTime;
+            transitionElapsed += Time.deltaTime * CameraSpeedScale;
             float n = Mathf.Clamp01(transitionElapsed / modeBlendDuration);
             float k = modeBlendCurve.Evaluate(n);
             Vector3 blendedOffset = Vector3.LerpUnclamped(fromOffset, toOffset, k);
@@ -105,7 +130,6 @@ public class CameraViewController : MonoBehaviour
         transitionElapsed = 0f;
         isTransitioning = true;
     }
-
     Vector3 GetOffset(GameMode mode)
     {
         return mode switch
@@ -117,7 +141,6 @@ public class CameraViewController : MonoBehaviour
             _ => backOffset,
         };
     }
-
     Quaternion GetRotation(GameMode mode)
     {
         return mode switch
@@ -129,27 +152,35 @@ public class CameraViewController : MonoBehaviour
             _ => Quaternion.Euler(20f, 0f, 0f),
         };
     }
-
     void ApplyCamera(bool applyConstraints)
     {
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * rotFollowSpeed);
-        Vector3 pos = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * posFollowSpeed);
-
+        float dt = Time.deltaTime * CameraSpeedScale;
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, dt * rotFollowSpeed);
+        Vector3 pos = Vector3.Lerp(transform.position, targetPos, dt * posFollowSpeed);
         if (applyConstraints)
         {
             if (gameMode == GameMode.BackView_ToForward)
-                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
+                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, dt * 2f);
             if (gameMode == GameMode.SideView_ToRight)
-                pos.y = transform.position.y;
+            {
+                if (!sideRightBaseYValid)
+                {
+                    sideRightBaseY = target.position.y + sideOffset.y;
+                    if (useInitialYCalibration && initialYBiasReady && !hasInitialized) 
+                        sideRightBaseY -= initialYBias;
+                    sideRightBaseYValid = true;
+                }
+                pos.y = sideRightBaseY;
+            }
             if (gameMode == GameMode.SideView_ToTop)
             {
-                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
-                pos.y = Mathf.Lerp(transform.position.y, target.position.y + topOffset.y, Time.deltaTime * 7f);
+                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, dt * 2f);
+                pos.y = Mathf.Lerp(transform.position.y, target.position.y + topOffset.y, dt * 7f);
             }
             if (gameMode == GameMode.SideView_ToDown)
             {
-                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
-                pos.y = Mathf.Lerp(transform.position.y, target.position.y + downOffset.y, Time.deltaTime * 7f);
+                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, dt * 2f);
+                pos.y = Mathf.Lerp(transform.position.y, target.position.y + downOffset.y, dt * 7f);
             }
         }
         transform.position = pos;

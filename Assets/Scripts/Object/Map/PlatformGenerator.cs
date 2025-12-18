@@ -54,6 +54,7 @@ public class PlatformGenerator : MonoBehaviour
         List<GameObject> objs = new();
         List<Bounds> placed = new();
         Bounds bgBounds = EnsureBackgroundAndGetBounds(anchorPos, dir);
+
         float minX = bgBounds.min.x + edgePadding;
         float maxX = bgBounds.max.x - edgePadding;
         float minY = bgBounds.min.y + edgePadding;
@@ -63,32 +64,38 @@ public class PlatformGenerator : MonoBehaviour
         float halfWidth = Mathf.Min((maxX - minX) * 0.5f, maxHalfWidth);
         minX = centerX - halfWidth;
         maxX = centerX + halfWidth;
-        float z = lockZ ? anchorPos.z : Mathf.Clamp(
-            anchorPos.z, bgBounds.min.z + edgePadding, bgBounds.max.z - edgePadding);
+
+        float z = lockZ ? anchorPos.z : Mathf.Clamp(anchorPos.z, bgBounds.min.z + edgePadding, bgBounds.max.z - edgePadding);
+
         Vector3 firstPos = new Vector3(
-            Mathf.Clamp(anchorPos.x, minX, maxX), Mathf.Clamp(anchorPos.y + playerStartYOffset, minY, maxY),z);
+            Mathf.Clamp(anchorPos.x, minX, maxX),
+            Mathf.Clamp(anchorPos.y + playerStartYOffset, minY, maxY),
+            z
+        );
 
         PlatformType type = ResolvePlatformType(dir);
+
         GameObject first = poolManager.GetPlatform(type, firstPos, Quaternion.identity);
         objs.Add(first);
         placed.Add(MakeBounds(firstPos, platformBoxSize, overlapPadding));
+
         float endY = (dir == Vector3.up) ? maxY : minY;
         int remainCount = Mathf.Max(0, platformCount - 1);
         float startY = firstPos.y;
         float step = (remainCount <= 1) ? 0f : (endY - startY) / remainCount;
+
         for (int i = 1; i <= remainCount; i++)
         {
             float baseY = startY + step * i;
             baseY = Mathf.Clamp(baseY, minY, maxY);
+
             Vector3 pos = FindNonOverlappingPosition(baseY, minX, maxX, z, placed);
             GameObject p = poolManager.GetPlatform(type, pos, Quaternion.identity);
             objs.Add(p);
             placed.Add(MakeBounds(pos, platformBoxSize, overlapPadding));
         }
-        Vector3 triggerPos = FindNonOverlappingPosition(endY, minX, maxX, z, placed);
-        GameObject trigger = poolManager.GetPlatform(PlatformType.Trigger, triggerPos, Quaternion.identity);
-        objs.Add(trigger);
-        return (objs, triggerPos);
+        Vector3 endPos = objs[objs.Count - 1].transform.position;
+        return (objs, endPos);
     }
 
     Vector3 FindNonOverlappingPosition(float baseY, float minX, float maxX, float z, List<Bounds> placed)
@@ -171,24 +178,27 @@ public class PlatformGenerator : MonoBehaviour
     {
         List<GameObject> objs = new();
         PlatformType type = ResolvePlatformType(dir);
+
         GameObject first = poolManager.GetPlatform(type, startPos, Quaternion.identity);
         objs.Add(first);
+
         Vector3 lastPos = startPos;
-        Vector3 boxSize = platformBoxSize; 
+        Vector3 boxSize = platformBoxSize;
         Vector3 half = boxSize / 2f;
+
         for (int i = 1; i < platformCount; i++)
         {
             float x = Random.Range(-half.x, half.x);
             float z = Random.Range(-half.z, half.z);
             float y = Random.Range(-half.y, half.y);
+
             float centerY = (type == PlatformType.ForJump) ? 2f : -2f;
             Vector3 newPos = lastPos + new Vector3(x, centerY + y, z);
+
             GameObject p = poolManager.GetPlatform(type, newPos, Quaternion.identity);
             objs.Add(p);
             lastPos = newPos;
         }
-        GameObject trigger = poolManager.GetPlatform(PlatformType.Trigger, lastPos, Quaternion.identity);
-        objs.Add(trigger);
-        return (objs, trigger.transform.position);
+        return (objs, lastPos);
     }
 }

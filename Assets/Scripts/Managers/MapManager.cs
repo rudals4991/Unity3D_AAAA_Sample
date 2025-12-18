@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapManager : MonoBehaviour,IManagerBase
+public class MapManager : MonoBehaviour, IManagerBase
 {
     PlatformGenerator platform;
     TileGenerator tile;
@@ -32,7 +32,7 @@ public class MapManager : MonoBehaviour,IManagerBase
         if (currentDirection == Vector3.forward) platform.ClearBackground();
         ClearAll();
         Vector3 anchor = GetAnchorPos(mode);
-        GenerateOneSegment(mode,anchor);
+        GenerateOneSegment(mode, anchor);
     }
     Vector3 ResolveDirection(GameMode mode)
     {
@@ -48,7 +48,7 @@ public class MapManager : MonoBehaviour,IManagerBase
     void InitializeGenerators()
     {
         if (platform == null) platform = DIContainer.Resolve<PlatformGenerator>();
-        if(tile == null) tile = DIContainer.Resolve<TileGenerator>();
+        if (tile == null) tile = DIContainer.Resolve<TileGenerator>();
         platform.Initialize(pool);
         tile.Initialize(pool);
         isInitialized = true;
@@ -57,7 +57,6 @@ public class MapManager : MonoBehaviour,IManagerBase
     {
         if (currentDirection == Vector3.forward)
         {
-            // Back/Right는 둘 다 z축 진행, 타일 타입만 다름
             tile.SetLinearType(mode == GameMode.BackView_ToForward ? TileType.Linear_ToForward : TileType.Linear_ToRight);
 
             var result = tile.Generate(startPos, currentDirection);
@@ -72,14 +71,18 @@ public class MapManager : MonoBehaviour,IManagerBase
     Vector3 GetAnchorPos(GameMode mode)
     {
         if (isFirst && mode == GameMode.SideView_ToRight)
-        { 
+        {
             isFirst = false;
             return Vector3.zero;
         }
         Player player = DIContainer.Resolve<Player>();
         if (player == null) return Vector3.zero;
-        Vector3 p = player.transform.position;
-        if (ResolveDirection(mode) == Vector3.forward) return new Vector3(0f, 0f, p.z);
+        Vector3 p = new();
+        if (mode == GameMode.SideView_ToRight || mode == GameMode.BackView_ToForward)
+            p = player.transform.position + new Vector3(0, 0, 24.5f);
+        else p = player.transform.position;
+
+        //if (ResolveDirection(mode) == Vector3.forward) return new Vector3(pla, 0f, p.z);
         return p;
     }
     public void ClearAll()

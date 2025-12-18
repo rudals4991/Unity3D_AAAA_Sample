@@ -43,7 +43,6 @@ public class CameraViewController : MonoBehaviour
         }
         ApplyCamera();
     }
-    
     void UpdateCameraMode()
     {
         switch (gameMode)
@@ -64,13 +63,10 @@ public class CameraViewController : MonoBehaviour
             first = false;
             return;
         }
-
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * 8f);
         Vector3 pos = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 5f);
-
         if (gameMode == GameMode.BackView_ToForward) pos.x = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
         if (gameMode == GameMode.SideView_ToRight) pos.y = transform.position.y; 
-
         if (gameMode == GameMode.SideView_ToTop)
         {
             pos.x = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
@@ -81,7 +77,6 @@ public class CameraViewController : MonoBehaviour
             pos.x = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * 2f);
             pos.y = Mathf.Lerp(transform.position.y, target.position.y + downOffset.y, Time.deltaTime * 7f);
         }
-
         transform.position = pos;
     }
 }

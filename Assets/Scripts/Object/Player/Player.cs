@@ -2,15 +2,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    //Player 오브젝트 데이터 값을 SO로 관리
     [SerializeField] PlayerData data;
 
-    // Player 오브젝트 컴포넌트
     public Rigidbody Rb { get; private set; }                  
     public CapsuleCollider Capsule { get; private set; }    
     public Animator Animator { get; private set; }
-
-    // Player 오브젝트 기능 컴포넌트(외부 접근용)          
+        
     public PlayerAutoMove PlayerAutoMove { get; private set; }
     public PlayerGyroMove PlayerGyroMove {get; private set;}
     public PlayerJump PlayerJump {get; private set;}
@@ -18,26 +15,24 @@ public class Player : MonoBehaviour
     public PlayerCollisionController CollisionController { get; private set; }
     public PlayerAnimation PlayerAnimation { get; private set; }
 
-    // Player 오브젝트 데이터 값(외부 접근용)
-    public float MoveSpeed => data.moveSpeed;                   //이동속도 초기세팅
-    public float CurrentMoveSpeed { get; private set; }         //현재 이동속도 (변경용)
-    public float GyroSpeedLeftRight => data.gyroSpeedLeftRight; //자이로(백뷰 모드) 이동속도
-    public float GyroSpeedForward => data.gyroSpeedForward;     //자이로(y축 이동 모드) 이동속도
-    public float DeadZone => data.deadZone;                     //떨림 보정용
-    public float Sensitivity => data.sensitivity;               //기울기에 따른 이동속도 증가폭
-    public float FallMultiplier => data.fallMultiplier;         //중력 강화용
-    public float JumpForce => data.jumpForce;                   //점프 높이
-    public int JumpCount_Back => data.maxJumpCount_BackView;    //BackView에서의 최대 점프 횟수
-    public int JumpCount_Side => data.maxJumpCount_SideView;    //SideView에서의 최대 점프 횟수
+    // Player 占쏙옙占쏙옙占쏙옙트 占쏙옙占쏙옙占쏙옙 占쏙옙(占쌤븝옙 占쏙옙占쌕울옙)
+    public float MoveSpeed => data.moveSpeed;                  
+    public float CurrentMoveSpeed { get; private set; }        
+    public float GyroSpeedLeftRight => data.gyroSpeedLeftRight;
+    public float GyroSpeedForward => data.gyroSpeedForward;     
+    public float DeadZone => data.deadZone;                     
+    public float Sensitivity => data.sensitivity;              
+    public float FallMultiplier => data.fallMultiplier;     
+    public float JumpForce => data.jumpForce;                   
+    public int JumpCount_Back => data.maxJumpCount_BackView;   
+    public int JumpCount_Side => data.maxJumpCount_SideView;   
     
-    // 모드별 기능 분리를 위한 Bool
     bool canAutoMove;
     bool canGyroMove;
     bool canJump;
 
     Vector3 prevPos;
 
-    //초기화 메서드 (Awake, Start 대체)
     public void Initialize(GameMode mode)
     {
         DIContainer.Register(this);
@@ -64,7 +59,6 @@ public class Player : MonoBehaviour
         prevPos = transform.position;
     }
 
-    //Update 대체
     public void Tick(float dt)
     {
         if(canAutoMove) PlayerAutoMove.AutoMove(dt);
@@ -81,9 +75,9 @@ public class Player : MonoBehaviour
         prevPos = transform.position;
     }
 
-    //게임 모드별 기능 적용 메서드
     public void ApplyGameMode(GameMode gameMode)
     {
+        transform.rotation = Quaternion.identity;
         switch (gameMode)
         {
             case GameMode.BackView_ToForward:
@@ -115,7 +109,6 @@ public class Player : MonoBehaviour
         }
         prevPos = transform.position;
     }
-    // 속도 조절용 메서드
     public void SetMoveSpeed(float speed)
     { 
         CurrentMoveSpeed = speed;

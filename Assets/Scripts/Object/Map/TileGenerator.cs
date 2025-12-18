@@ -47,10 +47,6 @@ public class TileGenerator : MonoBehaviour
         {
             objs.Add(trigger);
         }
-        else
-        {
-            Debug.LogError("[TileGenerator] Trigger tile spawn returned null.");
-        }
         Vector3 endPos = pos + dir * tileLength;
         return (objs, endPos);
     }

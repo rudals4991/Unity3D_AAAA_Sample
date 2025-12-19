@@ -4,6 +4,8 @@ public class PlayerGyroMove : MonoBehaviour
 {
     GyroMode gyroMode;
     Player player;
+    float cachedTilt;
+    bool hasTilt;
 
     public void Initialize(Player player)
     {
@@ -12,27 +14,48 @@ public class PlayerGyroMove : MonoBehaviour
     public void SetGyroMode(GyroMode mode)
     { 
         gyroMode = mode;
+        ResetCache();
     }
-    public void GyroMove(float dt)
+    public void ResetCache()
+    {
+        cachedTilt = 0f;
+        hasTilt = false;
+    }
+    public void Tick(float dt)
     {
         float tilt = player.PlayerInput.GetTilt();
-        if (Mathf.Abs(tilt) < player.DeadZone) return;
+
+        if (Mathf.Abs(tilt) < player.DeadZone)
+        {
+            hasTilt = false;
+            return;
+        }
+        cachedTilt = tilt;
+        hasTilt = true;
+    }
+    public void FixedTick(float fdt)
+    {
+        if (!hasTilt) return;
         switch (gyroMode)
         {
-            case GyroMode.LeftRight: MoveLeftRight(tilt,dt); break;
-            case GyroMode.Forward: MoveForward(tilt,dt); break;
+            case GyroMode.LeftRight: MoveLeftRight(fdt); break;
+            case GyroMode.Forward: MoveForward(fdt); break;
         }
     }
-    void MoveLeftRight(float tilt, float dt)
+    void MoveLeftRight(float fdt)
     {
-        float speed = tilt * player.GyroSpeedLeftRight;
-        transform.position += Vector3.right * speed * dt;
+        float speed = cachedTilt * player.GyroSpeedLeftRight;
+        Vector3 delta = Vector3.right * speed * fdt;
+        player.Rb.MovePosition(player.Rb.position + delta);
     }
-    void MoveForward(float tilt, float dt)
+    void MoveForward(float fdt)
     {
-        if (tilt > 0) transform.rotation = Quaternion.Euler(0, 90, 0);
-        else transform.rotation = Quaternion.Euler(0,-90,0);
-        float speed = Mathf.Abs(tilt) * player.GyroSpeedForward;
-        transform.position += transform.forward * speed * dt;
+        bool toRight = cachedTilt > 0f;
+        Quaternion rot = Quaternion.Euler(0f, toRight ? 90f : -90f, 0f);
+        player.Rb.MoveRotation(rot);
+        float speed = Mathf.Abs(cachedTilt) * player.GyroSpeedForward;
+        Vector3 dir = toRight ? Vector3.right : Vector3.left;
+        Vector3 delta = dir * speed * fdt;
+        player.Rb.MovePosition(player.Rb.position + delta);
     }
 }

@@ -1,15 +1,13 @@
 using System.Collections;
 using UnityEngine;
 
-//게임 시작 시, Manager 클래스들을 초기화시켜주는 최상위 Manager
 public class GameManager : MonoBehaviour
 {
-    private bool isInitialized = false; //초기화 보장용
-    public bool IsInitialized => isInitialized; //외부접근용
+    private bool isInitialized = false; 
+    public bool IsInitialized => isInitialized; 
 
-    public static GameManager Instance; //싱글톤
+    public static GameManager Instance; 
 
-    //Manager 맴버
     #region ManagerClass
     CountManager countManager;
     PauseManager pauseManager;
@@ -41,11 +39,18 @@ public class GameManager : MonoBehaviour
         float dt = Time.deltaTime;
         characterManager.Tick(dt);
     }
+    void FixedUpdate()
+    {
+        if (!isInitialized) return;
+        if (pauseManager.IsHardPaused) return;
+        if(pauseManager.BlockGameplayTick) return;
+        if (!countManager.IsGameActive) return;
+        float fdt = Time.fixedDeltaTime;
+        characterManager.FixedTick(fdt);
+    }
 
-    //각 Manager 클래스들을 GameManager가 관리하기 위한 메서드
     void GetAndAdd()
     {
-        // 별도의 GameObject를 만드는게 아닌 GameManager Object에 AddComponet를 통해 추가합니다.
         countManager ??= GetComponent<CountManager>() ?? gameObject.AddComponent<CountManager>();
         pauseManager ??= GetComponent<PauseManager>() ?? gameObject.AddComponent<PauseManager>();
         characterManager ??= GetComponent<CharacterManager>() ?? gameObject.AddComponent<CharacterManager>();
@@ -56,21 +61,16 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(StartInitialize());
     }
-
-    //Manager 초기화 메서드
     IEnumerator StartInitialize()
     {
         yield return StartCoroutine(ManagerInitializer.InitializeAll());
         isInitialized = true;
     }
 
-    //Manager 종료 메서드
     void StartExit()
     { 
         ManagerInitializer.ExitAll();
     }
-
-    //게임 종료 시, 안전보장용
     void OnApplicationQuit()
     {
         StartExit();

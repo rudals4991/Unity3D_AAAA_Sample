@@ -8,8 +8,13 @@ public class PlayerAutoMove : MonoBehaviour
     { 
         this.player = player;
     }
-    public void AutoMove(float dt)
+    public void Tick(float dt)
+    { 
+        
+    }
+    public void FixedTick(float fdt)
     {
-        transform.position += transform.forward * player.CurrentMoveSpeed * dt;
+        Vector3 delta = player.CurrentMoveSpeed * transform.forward * fdt;
+        player.Rb.MovePosition(player.Rb.position + delta);
     }
 }

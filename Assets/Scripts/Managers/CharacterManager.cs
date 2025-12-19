@@ -40,4 +40,9 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         if (player == null) return;
         player.Tick(dt);
     }
+    public void FixedTick(float fdt)
+    {
+        if (player == null) return;
+        player.FixedTick(fdt);
+    }
 }

@@ -21,7 +21,6 @@ public class PlayerJump : MonoBehaviour
 
     Player player;
 
-    // 땅 감지를 위한 땅 레이어
     public LayerMask groundLayer;
 
     public void Initialize(Player player)
@@ -29,31 +28,20 @@ public class PlayerJump : MonoBehaviour
         this.player = player;
         ResetJumpState();
     }
-    public void Jump(float dt)
+    public void FixedTick()
     {
         float vy = player.Rb.linearVelocity.y;
         bool isAscending = vy > 0;
         if (wasAscending && vy <= 0) OnJumpApex?.Invoke();
         wasAscending = isAscending;
-
-        // 땅 감지 상태 갱신
         isGround = CheckGround();
-
-        // 착지했을 경우
         if (!wasGround && isGround)
         {
             wasGround = isGround;
             ResetJumpState();
         }
-
-        // 점프 처리
-        // 점프 요청이 존재하는 경우
-        if (jumpRequested)
-        {
-            // 점프 시도
-            TryJump();
-        }
-        ApplyGravity(dt);
+        if (jumpRequested) TryJump();
+        ApplyGravity();
     }
     public void RequestJump()
     {
@@ -64,12 +52,9 @@ public class PlayerJump : MonoBehaviour
     {
         float dist = 0.2f;
         wasGround = isGround;
-
         Vector3 origin = transform.position + Vector3.up * 0.1f;
         Vector3 direction = Vector3.down;
-
         Ray ray = new Ray(origin, direction);
-
         return Physics.Raycast(ray, out RaycastHit hitInfo, dist, groundLayer, QueryTriggerInteraction.Ignore);
     }
     public void JumpByPlatform(float customForce)
@@ -98,7 +83,7 @@ public class PlayerJump : MonoBehaviour
         if (jumpCount == 1) OnJumpStarted?.Invoke();
         else if (jumpCount == 2) player.PlayerAnimation.SetDoubleJump();
     }
-    void ApplyGravity(float dt)
+    void ApplyGravity()
     {
         if (player.Rb.linearVelocity.y < 0)
         {

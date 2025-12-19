@@ -154,35 +154,49 @@ public class CameraViewController : MonoBehaviour
     }
     void ApplyCamera(bool applyConstraints)
     {
-        float dt = Time.deltaTime * CameraSpeedScale;
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, dt * rotFollowSpeed);
-        Vector3 pos = Vector3.Lerp(transform.position, targetPos, dt * posFollowSpeed);
+        float dt = Time.deltaTime;
+
+        // 프레임레이트 독립 보간 계수
+        float rotT = 1f - Mathf.Exp(-(rotFollowSpeed * CameraSpeedScale) * dt);
+        float posT = 1f - Mathf.Exp(-(posFollowSpeed * CameraSpeedScale) * dt);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotT);
+        Vector3 pos = Vector3.Lerp(transform.position, targetPos, posT);
+
         if (applyConstraints)
         {
+            // 아래 보정들도 동일한 방식으로 보간 계수를 사용하면 일관성이 좋아집니다.
+            float xT = 1f - Mathf.Exp(-(2f * CameraSpeedScale) * dt);
+            float yT = 1f - Mathf.Exp(-(7f * CameraSpeedScale) * dt);
+
             if (gameMode == GameMode.BackView_ToForward)
-                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, dt * 2f);
+                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, xT);
+
             if (gameMode == GameMode.SideView_ToRight)
             {
                 if (!sideRightBaseYValid)
                 {
                     sideRightBaseY = target.position.y + sideOffset.y;
-                    if (useInitialYCalibration && initialYBiasReady && !hasInitialized) 
+                    if (useInitialYCalibration && initialYBiasReady && !hasInitialized)
                         sideRightBaseY -= initialYBias;
                     sideRightBaseYValid = true;
                 }
                 pos.y = sideRightBaseY;
             }
+
             if (gameMode == GameMode.SideView_ToTop)
             {
-                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, dt * 2f);
-                pos.y = Mathf.Lerp(transform.position.y, target.position.y + topOffset.y, dt * 7f);
+                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, xT);
+                pos.y = Mathf.Lerp(transform.position.y, target.position.y + topOffset.y, yT);
             }
+
             if (gameMode == GameMode.SideView_ToDown)
             {
-                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, dt * 2f);
-                pos.y = Mathf.Lerp(transform.position.y, target.position.y + downOffset.y, dt * 7f);
+                pos.x = Mathf.Lerp(transform.position.x, targetPos.x, xT);
+                pos.y = Mathf.Lerp(transform.position.y, target.position.y + downOffset.y, yT);
             }
         }
+
         transform.position = pos;
     }
 }

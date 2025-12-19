@@ -3,7 +3,6 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] PlayerData data;
-
     public Rigidbody Rb { get; private set; }                  
     public CapsuleCollider Capsule { get; private set; }    
     public Animator Animator { get; private set; }
@@ -31,8 +30,6 @@ public class Player : MonoBehaviour
     bool canGyroMove;
     bool canJump;
 
-    Vector3 prevPos;
-
     public void Initialize(GameMode mode)
     {
         DIContainer.Register(this);
@@ -56,30 +53,36 @@ public class Player : MonoBehaviour
 
         CurrentMoveSpeed = MoveSpeed;
         ApplyGameMode(mode);
-        prevPos = transform.position;
     }
-
     public void Tick(float dt)
     {
-        if(canAutoMove) PlayerAutoMove.AutoMove(dt);
-        if(canGyroMove) PlayerGyroMove.GyroMove(dt);
-        if (canJump)
-        {
-            if (PlayerInput.GetJump()) PlayerJump.RequestJump();
-            PlayerJump.Jump(dt);
-        }
-        Vector3 delta = transform.position - prevPos;
-        delta.y = 0f;
-        bool isMoving = delta.sqrMagnitude > 0.00001f;
+        if(canAutoMove) PlayerAutoMove.Tick(dt);
+        if(canGyroMove) PlayerGyroMove.Tick(dt);
+        if (canJump) if (PlayerInput.GetJump()) PlayerJump.RequestJump();
+        Vector3 v = Rb != null ? Rb.linearVelocity : Vector3.zero;
+        v.y = 0f;
+        bool isMoving = v.sqrMagnitude > 0.00001f;
         PlayerAnimation.SetMoveAnim(isMoving);
-        prevPos = transform.position;
+    }
+    public void FixedTick(float fdt)
+    {
+        if (canAutoMove) PlayerAutoMove.FixedTick(fdt);
+        if (canGyroMove) PlayerGyroMove.FixedTick(fdt);
+        if (canJump) PlayerJump.FixedTick();
     }
 
     public void ApplyGameMode(GameMode gameMode)
     {
         CurrentMode = gameMode;
         CollisionController.SetDefault();
+        if (Rb != null)
+        {
+            Rb.angularVelocity = Vector3.zero;
+            Rb.rotation = Quaternion.identity;
+        }
         transform.rotation = Quaternion.identity;
+        PlayerGyroMove.ResetCache();
+        PlayerJump.ResetJumpState();
         switch (gameMode)
         {
             case GameMode.BackView_ToForward:
@@ -109,7 +112,6 @@ public class Player : MonoBehaviour
                     PlayerGyroMove.SetGyroMode(GyroMode.Forward);
                 } break;
         }
-        prevPos = transform.position;
     }
     public void SetMoveSpeed(float speed)
     { 

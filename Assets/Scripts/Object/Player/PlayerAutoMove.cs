@@ -14,7 +14,9 @@ public class PlayerAutoMove : MonoBehaviour
     }
     public void FixedTick(float fdt)
     {
-        Vector3 delta = player.CurrentMoveSpeed * transform.forward * fdt;
-        player.Rb.MovePosition(player.Rb.position + delta);
+        Vector3 v = player.Rb.linearVelocity;
+        Vector3 forward = transform.forward.normalized;
+        Vector3 want = forward * player.CurrentMoveSpeed;
+        player.Rb.linearVelocity = new Vector3(want.x, v.y, want.z);
     }
 }

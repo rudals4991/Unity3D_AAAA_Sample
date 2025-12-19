@@ -3,10 +3,11 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] PlayerData data;
+
+    // Player Components
     public Rigidbody Rb { get; private set; }                  
     public CapsuleCollider Capsule { get; private set; }    
     public Animator Animator { get; private set; }
-        
     public PlayerAutoMove PlayerAutoMove { get; private set; }
     public PlayerGyroMove PlayerGyroMove {get; private set;}
     public PlayerJump PlayerJump {get; private set;}
@@ -14,8 +15,8 @@ public class Player : MonoBehaviour
     public PlayerCollisionController CollisionController { get; private set; }
     public PlayerAnimation PlayerAnimation { get; private set; }
 
-    public float MoveSpeed => data.moveSpeed;                  
-    public float CurrentMoveSpeed { get; private set; }        
+    // SO Setting
+    public float MoveSpeed => data.moveSpeed;         
     public float GyroSpeedLeftRight => data.gyroSpeedLeftRight;
     public float GyroSpeedForward => data.gyroSpeedForward;     
     public float DeadZone => data.deadZone;                     
@@ -26,9 +27,16 @@ public class Player : MonoBehaviour
     public int JumpCount_Side => data.maxJumpCount_SideView;   
     public GameMode CurrentMode { get; private set; }
     
+    // ForState
     bool canAutoMove;
     bool canGyroMove;
     bool canJump;
+
+    // Speed Setting
+    public float SpeedScale { get; private set; } = 1f;
+    public float CurrentGyroSpeed_LeftRight { get; private set; }
+    public float CurrentGyroSpeed_Forward { get; private set; }
+    public float CurrentMoveSpeed { get; private set; }
 
     public void Initialize(GameMode mode)
     {
@@ -52,6 +60,9 @@ public class Player : MonoBehaviour
         PlayerAnimation.Initialize(this);
 
         CurrentMoveSpeed = MoveSpeed;
+        CurrentGyroSpeed_Forward = GyroSpeedForward;
+        CurrentGyroSpeed_LeftRight = GyroSpeedLeftRight;
+
         ApplyGameMode(mode);
     }
     public void Tick(float dt)
@@ -68,7 +79,7 @@ public class Player : MonoBehaviour
     {
         if (canAutoMove) PlayerAutoMove.FixedTick(fdt);
         if (canGyroMove) PlayerGyroMove.FixedTick(fdt);
-        if (canJump) PlayerJump.FixedTick();
+        PlayerJump.FixedTick();
     }
 
     public void ApplyGameMode(GameMode gameMode)
@@ -113,8 +124,11 @@ public class Player : MonoBehaviour
                 } break;
         }
     }
-    public void SetMoveSpeed(float speed)
-    { 
-        CurrentMoveSpeed = speed;
+    public void SetMoveSpeed()
+    {
+        SpeedScale += 0.2f;
+        CurrentMoveSpeed = MoveSpeed * SpeedScale;
+        CurrentGyroSpeed_Forward = GyroSpeedForward * SpeedScale;
+        CurrentGyroSpeed_LeftRight = GyroSpeedLeftRight * SpeedScale;
     }
 }

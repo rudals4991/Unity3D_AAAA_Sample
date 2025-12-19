@@ -10,10 +10,10 @@ public class GameModeManager : MonoBehaviour, IManagerBase
     {
         GameMode.SideView_ToRight,
         GameMode.BackView_ToForward,
-        GameMode.SideView_ToDown,
+        GameMode.SideView_ToTop,
         GameMode.SideView_ToRight,
         GameMode.BackView_ToForward,
-        GameMode.SideView_ToTop,
+        GameMode.SideView_ToDown,
     };
     int index = 0;
     GameMode currentMode;

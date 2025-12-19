@@ -36,26 +36,24 @@ public class PlayerGyroMove : MonoBehaviour
     public void FixedTick(float fdt)
     {
         if (!hasTilt) return;
+        Vector3 v = player.Rb.linearVelocity;
         switch (gyroMode)
         {
-            case GyroMode.LeftRight: MoveLeftRight(fdt); break;
-            case GyroMode.Forward: MoveForward(fdt); break;
+            case GyroMode.LeftRight:
+                {
+                    float speed = cachedTilt * player.CurrentGyroSpeed_LeftRight;
+                    player.Rb.linearVelocity = new Vector3(speed, v.y, v.z);
+                    break;
+                }
+            case GyroMode.Forward:
+                {
+                    bool toRight = cachedTilt > 0f;
+                    player.Rb.MoveRotation(Quaternion.Euler(0f, toRight ? 90f : -90f, 0f));
+                    float speed = Mathf.Abs(cachedTilt) * player.CurrentGyroSpeed_Forward;
+                    float x = toRight ? speed : -speed;
+                    player.Rb.linearVelocity = new Vector3(x, v.y, 0f);
+                    break;
+                }
         }
-    }
-    void MoveLeftRight(float fdt)
-    {
-        float speed = cachedTilt * player.GyroSpeedLeftRight;
-        Vector3 delta = Vector3.right * speed * fdt;
-        player.Rb.MovePosition(player.Rb.position + delta);
-    }
-    void MoveForward(float fdt)
-    {
-        bool toRight = cachedTilt > 0f;
-        Quaternion rot = Quaternion.Euler(0f, toRight ? 90f : -90f, 0f);
-        player.Rb.MoveRotation(rot);
-        float speed = Mathf.Abs(cachedTilt) * player.GyroSpeedForward;
-        Vector3 dir = toRight ? Vector3.right : Vector3.left;
-        Vector3 delta = dir * speed * fdt;
-        player.Rb.MovePosition(player.Rb.position + delta);
     }
 }

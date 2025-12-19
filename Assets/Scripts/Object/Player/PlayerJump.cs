@@ -43,6 +43,16 @@ public class PlayerJump : MonoBehaviour
         if (jumpRequested) TryJump();
         ApplyGravity();
     }
+    void Jump(float force, bool consumeCount)
+    {
+        Rigidbody rb = player.Rb;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+        if (consumeCount) jumpCount++;
+        wasAscending = true;
+        if (consumeCount && jumpCount == 1) OnJumpStarted?.Invoke();
+        else if (consumeCount && jumpCount == 2) player.PlayerAnimation.SetDoubleJump();
+    }
     public void RequestJump()
     {
         if (!CanJump()) return;
@@ -50,38 +60,22 @@ public class PlayerJump : MonoBehaviour
     }
     bool CheckGround()
     {
-        float dist = 0.2f;
+        float dist = 0.2f; 
         wasGround = isGround;
-        Vector3 origin = transform.position + Vector3.up * 0.1f;
-        Vector3 direction = Vector3.down;
-        Ray ray = new Ray(origin, direction);
+        Vector3 origin = transform.position + Vector3.up * 0.1f; 
+        Vector3 direction = Vector3.down; Ray ray = new Ray(origin, direction); 
         return Physics.Raycast(ray, out RaycastHit hitInfo, dist, groundLayer, QueryTriggerInteraction.Ignore);
     }
-    public void JumpByPlatform(float customForce)
-    {
-        Rigidbody rb = player.Rb;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * customForce, ForceMode.Impulse);
-        jumpCount = 1;
-    }
-
     bool CanJump()
     {
         return jumpCount < maxJumpCount;
     }
-
     void TryJump()
     {
         if (!CanJump()) return;
 
         jumpRequested = false;
-        Rigidbody rb = player.Rb;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * player.JumpForce, ForceMode.Impulse);
-        jumpCount++;
-        wasAscending = true;
-        if (jumpCount == 1) OnJumpStarted?.Invoke();
-        else if (jumpCount == 2) player.PlayerAnimation.SetDoubleJump();
+        Jump(player.JumpForce, consumeCount: true);
     }
     void ApplyGravity()
     {
@@ -104,5 +98,10 @@ public class PlayerJump : MonoBehaviour
     {
         jumpCount = 0;
         wasGround = false;
+    }
+    public void JumpByPlatform(float customForce)
+    {
+        jumpRequested = false;
+        Jump(customForce, consumeCount: true);
     }
 }

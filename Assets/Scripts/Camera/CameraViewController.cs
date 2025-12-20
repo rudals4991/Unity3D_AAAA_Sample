@@ -21,8 +21,8 @@ public class CameraViewController : MonoBehaviour
     Quaternion targetRot;
     GameMode gameMode;
 
-    float speedScale = 0.2f;
-    public float CameraSpeedScale { get; private set; } = 1f;
+    float cameraBaseSpeed = 1f;
+    float currentSpeed = 1f;
     bool useInitialYCalibration = true;
     float expectedGroundY = 0f;
 
@@ -43,18 +43,13 @@ public class CameraViewController : MonoBehaviour
         DIContainer.Register(this);
         GameModeManager.OnGameModeChanged -= SetCameraMode;
         GameModeManager.OnGameModeChanged += SetCameraMode;
+        SpeedScaleManager.OnSpeedScaleChanged -= ApplyScale;
+        SpeedScaleManager.OnSpeedScaleChanged += ApplyScale;
+        ApplyScale(1f);
     }
-    public void SetCameraSpeedScale(float scale)
+    void ApplyScale(float scale)
     {
-        CameraSpeedScale = scale;
-    }
-    public void IncreaseCameraSpeedStep()
-    {
-        CameraSpeedScale = CameraSpeedScale + speedScale;
-    }
-    public void ResetCameraSpeedScale(float scale = 1f)
-    {
-        CameraSpeedScale = scale;
+        currentSpeed = cameraBaseSpeed * scale;
     }
     public void SetTarget(Transform t)
     {
@@ -106,7 +101,7 @@ public class CameraViewController : MonoBehaviour
 
         if (isTransitioning)
         {
-            transitionElapsed += Time.deltaTime * CameraSpeedScale;
+            transitionElapsed += Time.deltaTime * currentSpeed;
             float n = Mathf.Clamp01(transitionElapsed / modeBlendDuration);
             float k = modeBlendCurve.Evaluate(n);
             Vector3 blendedOffset = Vector3.LerpUnclamped(fromOffset, toOffset, k);
@@ -157,8 +152,8 @@ public class CameraViewController : MonoBehaviour
         float dt = Time.deltaTime;
 
         // 프레임레이트 독립 보간 계수
-        float rotT = 1f - Mathf.Exp(-(rotFollowSpeed * CameraSpeedScale) * dt);
-        float posT = 1f - Mathf.Exp(-(posFollowSpeed * CameraSpeedScale) * dt);
+        float rotT = 1f - Mathf.Exp(-(rotFollowSpeed * currentSpeed) * dt);
+        float posT = 1f - Mathf.Exp(-(posFollowSpeed * currentSpeed) * dt);
 
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotT);
         Vector3 pos = Vector3.Lerp(transform.position, targetPos, posT);
@@ -166,8 +161,8 @@ public class CameraViewController : MonoBehaviour
         if (applyConstraints)
         {
             // 아래 보정들도 동일한 방식으로 보간 계수를 사용하면 일관성이 좋아집니다.
-            float xT = 1f - Mathf.Exp(-(2f * CameraSpeedScale) * dt);
-            float yT = 1f - Mathf.Exp(-(7f * CameraSpeedScale) * dt);
+            float xT = 1f - Mathf.Exp(-(2f * currentSpeed) * dt);
+            float yT = 1f - Mathf.Exp(-(7f * currentSpeed) * dt);
 
             if (gameMode == GameMode.BackView_ToForward)
                 pos.x = Mathf.Lerp(transform.position.x, targetPos.x, xT);

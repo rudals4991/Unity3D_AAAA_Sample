@@ -62,8 +62,10 @@ public class Player : MonoBehaviour
         CurrentMoveSpeed = MoveSpeed;
         CurrentGyroSpeed_Forward = GyroSpeedForward;
         CurrentGyroSpeed_LeftRight = GyroSpeedLeftRight;
-
+        ApplyScale(1f);
         ApplyGameMode(mode);
+        SpeedScaleManager.OnSpeedScaleChanged -= ApplyScale;
+        SpeedScaleManager.OnSpeedScaleChanged += ApplyScale;
     }
     public void Tick(float dt)
     {
@@ -124,11 +126,12 @@ public class Player : MonoBehaviour
                 } break;
         }
     }
-    public void SetMoveSpeed()
-    {
-        SpeedScale += 0.2f;
+    void ApplyScale(float scale)
+    { 
+        SpeedScale = scale;
         CurrentMoveSpeed = MoveSpeed * SpeedScale;
         CurrentGyroSpeed_Forward = GyroSpeedForward * SpeedScale;
         CurrentGyroSpeed_LeftRight = GyroSpeedLeftRight * SpeedScale;
     }
+
 }

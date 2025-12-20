@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     MapManager mapManager;
     GameModeManager gameModeManager;
     SpeedScaleManager speedScaleManager;
+    ScoreManager scoreManager;
     #endregion
     void Awake()
     {
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
         if (pauseManager.BlockGameplayTick) return;
         if (!countManager.IsGameActive) return;
         float dt = Time.deltaTime;
+        scoreManager.Tick(dt,dtUnscaled);
         characterManager.Tick(dt);
     }
     void FixedUpdate()
@@ -60,6 +62,7 @@ public class GameManager : MonoBehaviour
         mapManager ??= GetComponent<MapManager>() ?? gameObject.AddComponent<MapManager>();
         gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
         speedScaleManager ??= GetComponent<SpeedScaleManager>() ?? gameObject.AddComponent<SpeedScaleManager>();
+        scoreManager ??= GetComponent<ScoreManager>() ?? gameObject.AddComponent<ScoreManager>();
 
         StartCoroutine(StartInitialize());
     }

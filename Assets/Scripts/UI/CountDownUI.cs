@@ -15,14 +15,11 @@ public class CountDownUI : MonoBehaviour, IUIBase, IVisibleUI
         countManager.OnCountDown += OnCountChanged;
         countManager.OnCountDownFin += OnCountDownFin;
     }
-    private void OnDestroy()
+    public void SetActiveFalse()
     {
         if (countManager == null) return;
         countManager.OnCountDown -= OnCountChanged;
         countManager.OnCountDownFin -= OnCountDownFin;
-    }
-    public void SetActiveFalse()
-    {
         gameObject.SetActive(false);
     }
     void OnCountChanged(int second)

@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     GameModeManager gameModeManager;
     SpeedScaleManager speedScaleManager;
     ScoreManager scoreManager;
+    GameFlowManager flowManager;
     #endregion
     void Awake()
     {
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
         gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
         speedScaleManager ??= GetComponent<SpeedScaleManager>() ?? gameObject.AddComponent<SpeedScaleManager>();
         scoreManager ??= GetComponent<ScoreManager>() ?? gameObject.AddComponent<ScoreManager>();
+        flowManager ??= GetComponent<GameFlowManager>() ?? gameObject.AddComponent<GameFlowManager>();
 
         StartCoroutine(StartInitialize());
     }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class SpeedScaleManager : MonoBehaviour, IManagerBase
 {
@@ -9,11 +8,11 @@ public class SpeedScaleManager : MonoBehaviour, IManagerBase
     float amount = 0.2f;
     float speedScale = 1f;
     public int Priority => 8;
-    bool isFirst = true;
 
     public void Exit()
     {
         GameModeManager.OnGameModeChanged -= ModeChanged;
+        GameFlowManager.OnGameStarted -= HandleGameStarted;
     }
 
     public IEnumerator Initialize()
@@ -22,21 +21,20 @@ public class SpeedScaleManager : MonoBehaviour, IManagerBase
         yield return null;
         GameModeManager.OnGameModeChanged -= ModeChanged;
         GameModeManager.OnGameModeChanged += ModeChanged;
-
+        GameFlowManager.OnGameStarted -= HandleGameStarted;
+        GameFlowManager.OnGameStarted += HandleGameStarted;
         OnSpeedScaleChanged?.Invoke(speedScale);
+    }
+    void HandleGameStarted()
+    {
+        ResetScale(1f);
     }
     void ModeChanged(GameMode mode)
     {
-        Debug.Log($"isFirst = {isFirst}");
-        if (isFirst)
-        {
-            isFirst = false;
-            return;
-        }
         speedScale += amount;
         OnSpeedScaleChanged?.Invoke(speedScale);
     }
-    public void ResetScale(float scale = 1f)
+    void ResetScale(float scale = 1f)
     {
         speedScale = scale;
         OnSpeedScaleChanged?.Invoke(speedScale);

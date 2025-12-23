@@ -7,6 +7,7 @@ public class MySceneManager : MonoBehaviour
 {
     public static MySceneManager Instance { get; private set; }
     public static event Action<SceneList> OnSceneChanged;
+    public static event Action<SceneList> OnSceneLoaded;
     public SceneList CurrentScene { get; private set; } = SceneList.Title;
     SceneList currentContent = SceneList.Title;
     bool isLoading = false;
@@ -57,10 +58,7 @@ public class MySceneManager : MonoBehaviour
             if (!string.IsNullOrEmpty(curName))
             {
                 var curScene = SceneManager.GetSceneByName(curName);
-                if (curScene.isLoaded)
-                {
-                    yield return SceneManager.UnloadSceneAsync(curName);
-                }
+                if (curScene.isLoaded) yield return SceneManager.UnloadSceneAsync(curName);
             }
         }
         string nextName = ConvertSceneList(next);
@@ -78,9 +76,8 @@ public class MySceneManager : MonoBehaviour
         if (nextScene.IsValid() && nextScene.isLoaded) SceneManager.SetActiveScene(nextScene);
         currentContent = next;
         CurrentScene = next;
+        OnSceneLoaded?.Invoke(next);
         OnSceneChanged?.Invoke(next);
-        if (next == SceneList.GamePlay)
-            DIContainer.Resolve<GameModeManager>().StartCycle(GameMode.SideView_ToRight);
         isLoading = false;
     }
     public string UISceneName => ConvertSceneList(SceneList.UI);

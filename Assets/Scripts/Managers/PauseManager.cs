@@ -16,7 +16,7 @@ public class PauseManager : MonoBehaviour, IManagerBase
 
     public void Exit()
     {
-        countManager.OnCountDownFin -= OnCountDownFin;
+        CountManager.OnCountDownFin -= OnCountDownFin;
     }
 
     public IEnumerator Initialize()
@@ -24,8 +24,8 @@ public class PauseManager : MonoBehaviour, IManagerBase
         DIContainer.Register(this);
         yield return null;
         countManager = DIContainer.Resolve<CountManager>();
-        countManager.OnCountDownFin -= OnCountDownFin;
-        countManager.OnCountDownFin += OnCountDownFin;
+        CountManager.OnCountDownFin -= OnCountDownFin;
+        CountManager.OnCountDownFin += OnCountDownFin;
     }
     public void Pause()
     {
@@ -40,8 +40,9 @@ public class PauseManager : MonoBehaviour, IManagerBase
         Time.timeScale = 0;
         countManager.StartResumeCountDown(second);
     }
-    void OnCountDownFin()
+    void OnCountDownFin(CountPurpose purpose)
     {
+        if (purpose != CountPurpose.Resume) return;
         if (State != PauseState.Resuming) return;
         Time.timeScale = 1f;
         State = PauseState.Playing;

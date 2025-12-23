@@ -4,6 +4,6 @@ public class TestUI_Scene : MonoBehaviour
 {
     public void Load()
     {
-        MySceneManager.Instance.LoadScene(SceneList.GamePlay);
+        DIContainer.Resolve<GameFlowManager>().GameStart();
     }
 }

@@ -20,12 +20,12 @@ public class ScoreManager : MonoBehaviour, IManagerBase
     bool isRunning = false;
     float scoreAccumulator = 0f;
     float scoreScale = 1f;
-
-    CountManager countManager;
     public void Exit()
     {
-        countManager.OnCountDownFin -= StartScoring;
-        SpeedScaleManager.OnSpeedScaleChanged -= ApplySpeedScale;
+        GameFlowManager.OnGameStarted -= HandleGameStarted;
+        GameFlowManager.OnGamePlayBegin -= StartScoring;
+        GameFlowManager.OnGameOvered -= HandleGameOver;
+        SpeedScaleManager.OnSpeedScaleChanged -= SetScoreScale;
     }
 
     public IEnumerator Initialize()
@@ -33,19 +33,30 @@ public class ScoreManager : MonoBehaviour, IManagerBase
         DIContainer.Register(this);
         BestScore = PlayerPrefs.GetInt("BestScore", 0);
         yield return null;
-        countManager = DIContainer.Resolve<CountManager>();
-        countManager.OnCountDownFin -= StartScoring;
-        countManager.OnCountDownFin += StartScoring;
-        SpeedScaleManager.OnSpeedScaleChanged -= ApplySpeedScale;
-        SpeedScaleManager.OnSpeedScaleChanged += ApplySpeedScale;
+        GameFlowManager.OnGameStarted -= HandleGameStarted;
+        GameFlowManager.OnGameStarted += HandleGameStarted;
+
+        GameFlowManager.OnGamePlayBegin -= StartScoring;
+        GameFlowManager.OnGamePlayBegin += StartScoring;
+
+        GameFlowManager.OnGameOvered -= HandleGameOver;
+        GameFlowManager.OnGameOvered += HandleGameOver;
+
+        SpeedScaleManager.OnSpeedScaleChanged -= SetScoreScale;
+        SpeedScaleManager.OnSpeedScaleChanged += SetScoreScale;
     }
-    void StartScoring()
-    { 
-        isRunning = true;
-    }
-    public void StopScoring()
+    void HandleGameStarted()
     {
-        isRunning = false;
+        ResetScore(keepBest: true);
+        StopScoring();
+    }
+    void StartScoring() => isRunning = true;
+
+    void StopScoring() => isRunning = false;
+
+    void HandleGameOver(GameoverReason _)
+    {
+        StopScoring();
     }
     public void ResetScore(bool keepBest = true)
     {
@@ -62,8 +73,8 @@ public class ScoreManager : MonoBehaviour, IManagerBase
             OnBestScoreChanged?.Invoke(BestScore);
         }
     }
-    void ApplySpeedScale(float scale)
-    { 
+    void SetScoreScale(float scale)
+    {
         scoreScale = scale;
     }
     public void Tick(float dt, float udt)

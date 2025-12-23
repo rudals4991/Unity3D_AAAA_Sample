@@ -9,32 +9,40 @@ public class CountDownUI : MonoBehaviour, IUIBase, IVisibleUI
     public void Initialize()
     {
         countManager = DIContainer.Resolve<CountManager>();
-        OnCountDownFin();
-        countManager.OnCountDown -= OnCountChanged;
-        countManager.OnCountDownFin -= OnCountDownFin;
-        countManager.OnCountDown += OnCountChanged;
-        countManager.OnCountDownFin += OnCountDownFin;
+        HideText();
+        CountManager.OnCountDown -= OnCountChanged;
+        CountManager.OnCountDown += OnCountChanged;
+        CountManager.OnCountDownFin -= OnCountDownFin;
+        CountManager.OnCountDownFin += OnCountDownFin;
+    }
+    void OnDestroy()
+    {
+        CountManager.OnCountDown -= OnCountChanged;
+        CountManager.OnCountDownFin -= OnCountDownFin;
     }
     public void SetActiveFalse()
     {
-        if (countManager == null) return;
-        countManager.OnCountDown -= OnCountChanged;
-        countManager.OnCountDownFin -= OnCountDownFin;
         gameObject.SetActive(false);
     }
     void OnCountChanged(int second)
     {
         if (second <= 0)
         {
-            OnCountDownFin();
+            HideText();
             return;
         }
         text.gameObject.SetActive(true);
         text.text = second.ToString();
     }
-    void OnCountDownFin()
+    void OnCountDownFin(CountPurpose _)
     {
-        text.text = "";
+        HideText();
+    }
+    void HideText()
+    {
+        if (text == null) return;
+        text.text = string.Empty;
+        text.gameObject.SetActive(false);
     }
     public bool IsVisible(SceneList scene)
     {

@@ -23,6 +23,7 @@ public class GameModeManager : MonoBehaviour, IManagerBase
 
     public void Exit()
     {
+        GameFlowManager.OnGameStarted -= HandleGameStarted;
     }
     public IEnumerator Initialize()
     {
@@ -30,6 +31,12 @@ public class GameModeManager : MonoBehaviour, IManagerBase
         yield return null;
         characterManager = DIContainer.Resolve<CharacterManager>();
         mapManager = DIContainer.Resolve<MapManager>();
+        GameFlowManager.OnGameStarted -= HandleGameStarted;
+        GameFlowManager.OnGameStarted += HandleGameStarted;
+    }
+    void HandleGameStarted()
+    {
+        StartCycle(GameMode.SideView_ToRight);
     }
     public void StartCycle(GameMode? start = null)
     {

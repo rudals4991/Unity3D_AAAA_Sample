@@ -3,9 +3,9 @@ using UnityEngine;
 public class JumpPlatform : MonoBehaviour
 {
     [SerializeField] float jumpForce = 12f;
-    void OmCollisionEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.TryGetComponent<Player>(out _))
-            other.GetComponent<Player>().PlayerJump.JumpByPlatform(jumpForce);
+        if (collision.gameObject.TryGetComponent<Player>(out _))
+            collision.gameObject.GetComponent<Player>().PlayerJump.JumpByPlatform(jumpForce);
     }
 }

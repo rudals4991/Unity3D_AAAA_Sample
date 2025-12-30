@@ -41,6 +41,7 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     }
     void HandleGameOver(GameoverReason _)
     {
+        Debug.Log("Stop");
         tickEnabled = false;
     }
     public void CreatePlayer()

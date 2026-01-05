@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 8291038390438208814}
   - component: {fileID: 1473633591910187530}
   - component: {fileID: 4078545939031309956}
+  - component: {fileID: 1325067416250714676}
   m_Layer: 3
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -495,3 +496,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1325067416250714676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8487331263337726969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a288eeb753bbdaa40a406b26484c7d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectCollision

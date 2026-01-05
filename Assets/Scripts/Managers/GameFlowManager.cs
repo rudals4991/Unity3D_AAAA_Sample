@@ -13,7 +13,11 @@ public class GameFlowManager : MonoBehaviour, IManagerBase
     bool isLoading = false;
     bool hasPlayBegun = false;
     CountManager countManager;
+    PauseManager pauseManager;
+    MySceneManager sceneManager;
 
+    public bool IsInRun => isGamePlaying;               
+    public bool CanGameplay => isGamePlaying && hasPlayBegun && !pauseManager.BlockGameplayTick;
     public void Exit()
     {
         MySceneManager.OnSceneLoaded -= SceneLoaded;
@@ -25,6 +29,9 @@ public class GameFlowManager : MonoBehaviour, IManagerBase
         DIContainer.Register(this);
         yield return null;
         countManager = DIContainer.Resolve<CountManager>();
+        pauseManager = DIContainer.Resolve<PauseManager>();
+        sceneManager = MySceneManager.Instance;
+
         MySceneManager.OnSceneLoaded -= SceneLoaded;
         MySceneManager.OnSceneLoaded += SceneLoaded;
         CountManager.OnCountDownFin -= CountDownFin;
@@ -35,10 +42,7 @@ public class GameFlowManager : MonoBehaviour, IManagerBase
         if (!isLoading) return;
         if (scene != SceneList.GamePlay) return;
         isLoading = false;
-        isGamePlaying = true;
-        hasPlayBegun = false;
-        OnGameStarted?.Invoke();
-        countManager.StartFirstCountDown(3f);
+        StartRun();
     }
     void CountDownFin(CountPurpose purpose)
     {
@@ -51,16 +55,48 @@ public class GameFlowManager : MonoBehaviour, IManagerBase
     }
     public void GameStart()
     {
-        if (isGamePlaying || isLoading) return;
+        if (isLoading) return;
+
+        if (sceneManager.CurrentScene == SceneList.GamePlay)
+        {
+            StartRun();
+            return;
+        }
+        if (isGamePlaying) return;
         isLoading = true;
         hasPlayBegun = false;
-        MySceneManager.Instance.LoadScene(SceneList.GamePlay);
+        sceneManager.LoadScene(SceneList.GamePlay);
+    }
+    public void GameRestart()
+    {
+        if (isLoading) return;
+        if (sceneManager.CurrentScene != SceneList.GamePlay) return;
+        StartRun();
     }
     public void GameOver(GameoverReason reason)
-    { 
+    {
         if (!isGamePlaying) return;
         isGamePlaying = false;
         isLoading = false;
+        hasPlayBegun = false;
         OnGameOvered?.Invoke(reason);
+    }
+    public void GamePause()
+    {
+        if (!isGamePlaying) return;
+        pauseManager.Pause();
+    }
+    public void GameResume(float second = 3f)
+    {
+        if (!isGamePlaying) return;
+        pauseManager.Resume(second);
+    }
+    void StartRun()
+    {
+        isLoading = false;
+        isGamePlaying = true;
+        hasPlayBegun = false;
+        OnGameStarted?.Invoke();
+        countManager.StartFirstCountDown(3f);
     }
 }

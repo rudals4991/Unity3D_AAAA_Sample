@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6055093200883130166}
   - component: {fileID: 4264704876385677181}
   - component: {fileID: 5250439268015609008}
+  - component: {fileID: 5272601375372813721}
   m_Layer: 3
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -111,6 +112,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5272601375372813721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936842456943128463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a288eeb753bbdaa40a406b26484c7d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectCollision
 --- !u!1 &2887357308091519629
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,6 +136,7 @@ GameObject:
   - component: {fileID: 8274282784828089527}
   - component: {fileID: 4567019698350022855}
   - component: {fileID: 2384673795770459110}
+  - component: {fileID: 7462244201952123597}
   m_Layer: 3
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -222,6 +236,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7462244201952123597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2887357308091519629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a288eeb753bbdaa40a406b26484c7d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectCollision
 --- !u!1 &4089087250969013560
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,6 +260,7 @@ GameObject:
   - component: {fileID: 828168619101338946}
   - component: {fileID: 4990815135453197990}
   - component: {fileID: 2497187353249882257}
+  - component: {fileID: 6722788305601136084}
   m_Layer: 3
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -333,6 +360,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6722788305601136084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4089087250969013560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a288eeb753bbdaa40a406b26484c7d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectCollision
 --- !u!1 &5278619050170736114
 GameObject:
   m_ObjectHideFlags: 0

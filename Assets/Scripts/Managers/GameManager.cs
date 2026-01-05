@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     ScoreManager scoreManager;
     GameFlowManager flowManager;
     #endregion
+    FallDetect fallDetect;
     void Awake()
     {
         if (Instance != null)
@@ -40,8 +41,13 @@ public class GameManager : MonoBehaviour
         if (pauseManager.BlockGameplayTick) return;
         if (!countManager.IsGameActive) return;
         float dt = Time.deltaTime;
-        scoreManager.Tick(dt,dtUnscaled);
         characterManager.Tick(dt);
+        if (fallDetect == null)
+        {
+            fallDetect = DIContainer.Resolve<FallDetect>();
+        }
+        else fallDetect.Tick(dtUnscaled);
+        scoreManager.Tick(dt,dtUnscaled);
     }
     void FixedUpdate()
     {

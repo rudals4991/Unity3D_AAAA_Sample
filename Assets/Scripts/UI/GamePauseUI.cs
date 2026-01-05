@@ -4,11 +4,11 @@ using UnityEngine.UI;
 public class GamePauseUI : MonoBehaviour,IUIBase,IVisibleUI
 {
     [SerializeField] SceneList[] visibleScenes;
-    PauseManager pauseManager;
+    GameFlowManager gameFlowManager;
     bool isPaused = false;
     public void Initialize()
     {
-        pauseManager = DIContainer.Resolve<PauseManager>();
+        gameFlowManager = DIContainer.Resolve<GameFlowManager>();
     }
 
     public void SetActiveFalse()
@@ -17,16 +17,16 @@ public class GamePauseUI : MonoBehaviour,IUIBase,IVisibleUI
     }
     public void PauseAndResume()
     {
-        if(pauseManager == null) pauseManager = DIContainer.Resolve<PauseManager>();
-        if (isPaused)
+        if(gameFlowManager == null) gameFlowManager = DIContainer.Resolve<GameFlowManager>();
+        if (!isPaused)
         {
-            isPaused = false;
-            pauseManager.Resume();
+            isPaused = true;
+            gameFlowManager.GamePause();
         }
         else
         {
-            isPaused = true;
-            pauseManager.Pause();
+            isPaused = false;
+            gameFlowManager.GameResume(3f);
         }
     }
 

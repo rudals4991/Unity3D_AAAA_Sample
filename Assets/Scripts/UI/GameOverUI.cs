@@ -10,7 +10,6 @@ public class GameOverUI : MonoBehaviour, IUIBase,IVisibleUI
 
     public void Initialize()
     {
-        Debug.Log("11");
         gameFlowManager = DIContainer.Resolve<GameFlowManager>();
         scoreManager = DIContainer.Resolve<ScoreManager>();
         GameFlowManager.OnGameOvered -= GameOver;
@@ -30,7 +29,6 @@ public class GameOverUI : MonoBehaviour, IUIBase,IVisibleUI
     }
     void GameOver(GameoverReason reason)
     {
-        Debug.Log("GameOver");
         gameObject.SetActive(true);
         if (scoreManager is null) scoreManager = DIContainer.Resolve<ScoreManager>();
         currentScore.text = scoreManager.CurrentScore.ToString();
@@ -43,9 +41,9 @@ public class GameOverUI : MonoBehaviour, IUIBase,IVisibleUI
     public bool IsVisible(SceneList scene)
     {
         if (visibleScenes == null) return false;
-        foreach (SceneList s in visibleScenes)
+        for (int i = 0; i < visibleScenes.Length; i++)
         {
-            if (s == scene) return true;
+            if (visibleScenes[i] == scene) return true;
         }
         return false;
     }

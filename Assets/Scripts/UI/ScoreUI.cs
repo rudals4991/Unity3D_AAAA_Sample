@@ -10,7 +10,7 @@ public class ScoreUI : MonoBehaviour, IUIBase, IVisibleUI
 
     public void Initialize()
     {
-        scoreManager ??= DIContainer.Resolve<ScoreManager>();
+        scoreManager = DIContainer.Resolve<ScoreManager>();
         ApplyBestScore(scoreManager.BestScore);
         ApplyCurrentScore(scoreManager.CurrentScore);
         ScoreManager.OnBestScoreChanged -= SetBestScoreUI;

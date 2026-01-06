@@ -7,7 +7,7 @@ public class MapManager : MonoBehaviour, IManagerBase
     PlatformGenerator platform;
     TileGenerator tile;
     PoolManager pool;
-    public int Priority => 6;
+    public int Priority => 5;
 
     Vector3 currentDirection = Vector3.forward;
     List<GameObject> activeObjects = new();

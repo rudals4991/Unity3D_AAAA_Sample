@@ -7,7 +7,7 @@ public class SpeedScaleManager : MonoBehaviour, IManagerBase
     public static event Action<float> OnSpeedScaleChanged;
     float amount = 0.2f;
     float speedScale = 1f;
-    public int Priority => 8;
+    public int Priority => 7;
 
     public void Exit()
     {

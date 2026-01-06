@@ -6,7 +6,7 @@ public class ScoreManager : MonoBehaviour, IManagerBase
 {
     public static Action<int> OnCurrentScoreChanged;
     public static Action<int> OnBestScoreChanged;
-    public int Priority => 9;
+    public int Priority => 8;
     const int MAXSCORE = int.MaxValue;
 
     [Header("Score Setting")]

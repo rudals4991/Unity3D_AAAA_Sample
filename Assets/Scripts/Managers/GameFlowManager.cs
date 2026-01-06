@@ -7,7 +7,7 @@ public class GameFlowManager : MonoBehaviour, IManagerBase
     public static event Action OnGameStarted;
     public static event Action OnGamePlayBegin;
     public static event Action<GameoverReason> OnGameOvered;
-    public int Priority => 10;
+    public int Priority => 9;
 
     bool isGamePlaying = false;
     bool isLoading = false;

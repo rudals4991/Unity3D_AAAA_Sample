@@ -6,4 +6,12 @@ public class TestUI_Scene : MonoBehaviour
     {
         DIContainer.Resolve<GameFlowManager>().GameStart();
     }
+    public void Quit()
+    { 
+        Application.Quit();
+    }
+    public void Regame()
+    {
+        DIContainer.Resolve<GameFlowManager>().GameRestart();
+    }
 }

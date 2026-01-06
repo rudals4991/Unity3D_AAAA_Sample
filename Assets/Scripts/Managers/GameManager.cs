@@ -12,13 +12,13 @@ public class GameManager : MonoBehaviour
     CountManager countManager;
     PauseManager pauseManager;
     CharacterManager characterManager;
-    UIManager uiManager;
     PoolManager poolManager;
     MapManager mapManager;
     GameModeManager gameModeManager;
     SpeedScaleManager speedScaleManager;
     ScoreManager scoreManager;
     GameFlowManager flowManager;
+    UIManager uiManager;
     #endregion
     FallDetect fallDetect;
     void Awake()
@@ -64,13 +64,13 @@ public class GameManager : MonoBehaviour
         countManager ??= GetComponent<CountManager>() ?? gameObject.AddComponent<CountManager>();
         pauseManager ??= GetComponent<PauseManager>() ?? gameObject.AddComponent<PauseManager>();
         characterManager ??= GetComponent<CharacterManager>() ?? gameObject.AddComponent<CharacterManager>();
-        uiManager ??= GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
         poolManager ??= GetComponent<PoolManager>() ?? gameObject.AddComponent<PoolManager>();
         mapManager ??= GetComponent<MapManager>() ?? gameObject.AddComponent<MapManager>();
         gameModeManager ??= GetComponent<GameModeManager>() ?? gameObject.AddComponent<GameModeManager>();
         speedScaleManager ??= GetComponent<SpeedScaleManager>() ?? gameObject.AddComponent<SpeedScaleManager>();
         scoreManager ??= GetComponent<ScoreManager>() ?? gameObject.AddComponent<ScoreManager>();
         flowManager ??= GetComponent<GameFlowManager>() ?? gameObject.AddComponent<GameFlowManager>();
+        uiManager ??= GetComponent<UIManager>() ?? gameObject.AddComponent<UIManager>();
 
         StartCoroutine(StartInitialize());
     }

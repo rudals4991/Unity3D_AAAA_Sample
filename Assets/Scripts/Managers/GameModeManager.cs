@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameModeManager : MonoBehaviour, IManagerBase
 {
     public static event Action<GameMode> OnGameModeChanged;
-    public int Priority => 7;
+    public int Priority => 6;
     readonly GameMode[] cycle =
     {
         GameMode.SideView_ToRight,

@@ -11,7 +11,6 @@ public class CountManager : MonoBehaviour, IManagerBase
     public static event Action<CountPurpose> OnCountDownFin;
 
     float remain;
-    bool isFlag;
     CountPurpose currentPurpose;
 
     public void Exit()

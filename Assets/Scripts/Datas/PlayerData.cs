@@ -4,17 +4,18 @@ using UnityEngine;
 public class PlayerData : ScriptableObject
 {
     [Header("AutoMove")]
-    public float moveSpeed;                 //초기값: 5f;
+    public float moveSpeed;
 
     [Header("GyroMove")]
-    public float gyroSpeedLeftRight;        //초기값: 5f;
-    public float gyroSpeedForward;          //초기값: 5f;
-    public float deadZone;                  //초기값: 0.1f;
-    public float sensitivity;               //초기값: 1.2f
+    public float gyroSpeedLeftRight;
+    public float gyroSpeedForward;
+    public float deadZone;
+
+    public float sensitivity;
 
     [Header("Jump")]
-    public float jumpForce;                 //초기값: 4f;
-    public float fallMultiplier;            //초기값: 2f;
-    public int maxJumpCount_BackView;       //초기값: 1;
-    public int maxJumpCount_SideView;       //초기값: 2;
+    public float jumpForce;
+    public float fallMultiplier;
+    public int maxJumpCount_BackView;
+    public int maxJumpCount_SideView;
 }

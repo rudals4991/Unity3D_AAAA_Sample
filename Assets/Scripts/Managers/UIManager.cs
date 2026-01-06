@@ -54,6 +54,7 @@ public class UIManager : MonoBehaviour, IManagerBase
             if (ui is IVisibleUI visi) visible = visi.IsVisible(scene);
             mb.gameObject.SetActive(visible);
             if (!visible) ui.SetActiveFalse();
+            Debug.Log($"uiName: {mb} / visible: {visible}");
         }
     }
     void InitializeUIs()

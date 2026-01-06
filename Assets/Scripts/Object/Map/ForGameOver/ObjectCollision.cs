@@ -8,10 +8,11 @@ public class ObjectCollision : MonoBehaviour
     {
         gameFlowManager = DIContainer.Resolve<GameFlowManager>();
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (!other.TryGetComponent<Player>(out _)) return;
+        if (!collision.gameObject.TryGetComponent<Player>(out _)) return;
         if (!gameFlowManager.CanGameplay) return;
         gameFlowManager.GameOver(reason);
+        Debug.Log("GameOver");
     }
 }

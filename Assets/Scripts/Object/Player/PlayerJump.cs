@@ -5,23 +5,27 @@ public class PlayerJump : MonoBehaviour
 {
     int maxJumpCount;
     int _jumpCount;
-    bool wasAscending = false;
+
     public event Action OnJumpStarted;
     public event Action OnJumpApex;
-    int jumpCount 
-    {
-        get { return _jumpCount; } 
-        set {
-            _jumpCount = value; 
-        }
-    }
+
     bool jumpRequested = false;
     bool isGround = false;
     bool wasGround = false;
 
     Player player;
-
     public LayerMask groundLayer;
+
+    bool wasAscending = false;
+
+    bool platformJumpPending = false;
+    float pendingPlatformForce = 0f;
+
+    int jumpCount
+    {
+        get => _jumpCount;
+        set => _jumpCount = value;
+    }
 
     public void Initialize(Player player)
     {
@@ -30,9 +34,14 @@ public class PlayerJump : MonoBehaviour
     }
     public void FixedTick()
     {
+        if (platformJumpPending)
+        {
+            platformJumpPending = false;
+            Jump(pendingPlatformForce, consumeCount: true);
+        }
         float vy = player.Rb.linearVelocity.y;
         bool isAscending = vy > 0;
-        if (wasAscending && vy <= 0) OnJumpApex?.Invoke();
+        if (wasAscending && !isAscending) OnJumpApex?.Invoke();
         wasAscending = isAscending;
         isGround = CheckGround();
         if (!wasGround && isGround)
@@ -47,9 +56,10 @@ public class PlayerJump : MonoBehaviour
     {
         Rigidbody rb = player.Rb;
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * force, ForceMode.VelocityChange);
         if (consumeCount) jumpCount++;
-        wasAscending = true;
+        //wasAscending = true;
+
         if (consumeCount && jumpCount == 1) OnJumpStarted?.Invoke();
         else if (consumeCount && jumpCount == 2) player.PlayerAnimation.SetDoubleJump();
     }
@@ -60,10 +70,11 @@ public class PlayerJump : MonoBehaviour
     }
     bool CheckGround()
     {
-        float dist = 0.2f; 
+        float dist = 0.2f;
         wasGround = isGround;
-        Vector3 origin = transform.position + Vector3.up * 0.1f; 
-        Vector3 direction = Vector3.down; Ray ray = new Ray(origin, direction); 
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        Vector3 direction = Vector3.down;
+        Ray ray = new Ray(origin, direction);
         return Physics.Raycast(ray, out RaycastHit hitInfo, dist, groundLayer, QueryTriggerInteraction.Ignore);
     }
     bool CanJump()
@@ -98,10 +109,13 @@ public class PlayerJump : MonoBehaviour
     {
         jumpCount = 0;
         wasGround = false;
+        wasAscending = false;
+        platformJumpPending = false;
+        pendingPlatformForce = 0f;
     }
-    public void JumpByPlatform(float customForce)
+    public void RequestPlatformJump(float force)
     {
-        jumpRequested = false;
-        Jump(customForce, consumeCount: true);
+        platformJumpPending = true;
+        pendingPlatformForce = force;
     }
 }

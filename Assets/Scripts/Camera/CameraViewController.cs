@@ -37,6 +37,7 @@ public class CameraViewController : MonoBehaviour
     bool sideRightBaseYValid = false;
     float initialYBias = 0f;
     bool initialYBiasReady = false;
+    bool IsScrollMode(GameMode m) => m == GameMode.SideView_ToTop || m == GameMode.SideView_ToDown;
 
     void Awake()
     {
@@ -71,6 +72,20 @@ public class CameraViewController : MonoBehaviour
     {
         gameMode = mode;
         if (target == null) return;
+        Vector3 nextOffset = GetOffset(mode);
+        Quaternion nextRot = GetRotation(mode);
+        if (IsScrollMode(mode))
+        {
+            isTransitioning = false;
+            transitionElapsed = 0f;
+            targetPos = target.position + nextOffset;
+            if (useInitialYCalibration && initialYBiasReady) targetPos.y -= initialYBias;
+            targetRot = nextRot;
+            transform.position = targetPos; 
+            transform.rotation = targetRot;
+            hasInitialized = true;
+            return;
+        }
         if (mode == GameMode.SideView_ToRight)
         {
             float y = target.position.y + sideOffset.y;
@@ -79,8 +94,6 @@ public class CameraViewController : MonoBehaviour
             sideRightBaseYValid = true;
         }
         else sideRightBaseYValid = false;
-        Vector3 nextOffset = GetOffset(mode);
-        Quaternion nextRot = GetRotation(mode);
         if (!hasInitialized)
         {
             targetPos = target.position + nextOffset;
@@ -98,7 +111,14 @@ public class CameraViewController : MonoBehaviour
     void LateUpdate()
     {
         if (target == null) return;
-
+        if (IsScrollMode(gameMode))
+        {
+            targetRot = GetRotation(gameMode);
+            float dt = Time.deltaTime;
+            float rotT = 1f - Mathf.Exp(-(rotFollowSpeed * currentSpeed) * dt);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotT);
+            return;
+        }
         if (isTransitioning)
         {
             transitionElapsed += Time.deltaTime * currentSpeed;

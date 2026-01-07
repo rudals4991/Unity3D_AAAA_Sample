@@ -15,6 +15,9 @@ public class FallDetect : MonoBehaviour
     float fallBaseY = 0;
     bool needBaseline = false;
 
+    bool waitFirstVisible = false;
+    bool seenVisibleOnce = false;
+
     void Awake()
     {
         DIContainer.Register(this);
@@ -31,11 +34,15 @@ public class FallDetect : MonoBehaviour
         {
             needBaseline = true;
             baseLine = false;
+            waitFirstVisible = false;
+            seenVisibleOnce = false;
         }
         else
         {
             needBaseline = false;
             baseLine = false;
+            waitFirstVisible = true;
+            seenVisibleOnce = false;
         }
     }
     public void Tick(float dt)
@@ -56,9 +63,15 @@ public class FallDetect : MonoBehaviour
             if (player == null) return;
             if (cam == null) cam = Camera.main;
             if (cam == null) return;
-
             Vector3 vp = cam.WorldToViewportPoint(player.transform.position);
             if (vp.z < 0f) return;
+            bool inX = vp.x >= 0f && vp.x <= 1f;
+            bool inY = vp.y >= 0f && vp.y <= 1f;
+            bool inScreen = inX && inY;
+            if (waitFirstVisible && !seenVisibleOnce)
+            {
+                if (inScreen) seenVisibleOnce = true; return;
+            }
             bool outX = vp.x < -viewportMargin || vp.x > 1f + viewportMargin;
             bool outY = vp.y < -viewportMargin || vp.y > 1f + viewportMargin;
             if (outX || outY) gameFlowManager.GameOver(GameoverReason.OutOfScreen);

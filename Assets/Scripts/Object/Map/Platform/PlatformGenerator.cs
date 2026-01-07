@@ -24,7 +24,8 @@ public class PlatformGenerator : MonoBehaviour
     float xJitter = 1.5f;                           
     float maxHalfWidth = 12f;
     float playerStartYOffset = -2f;
-    float backgroundGap = 0.05f;  
+
+    float backgroundAttachEpsilon = 0.01f;
     bool useFixedPlaneBounds = true; 
     bool lockZ = true;                          
     GameObject backgroundInstance;
@@ -139,30 +140,25 @@ public class PlatformGenerator : MonoBehaviour
             }
             backgroundInstance.transform.rotation = Quaternion.Euler(backgroundEuler);
             backgroundInstance.transform.localScale = backgroundScale;
-            float push = (platformBoxSize.z * 0.5f) + backgroundGap;
-            Camera cam = Camera.main;
-            if (cam != null)
-            {
-                Vector3 camPos = cam.transform.position;
-                Vector3 viewDir = (spawnCenter - camPos).normalized;
-                Vector3 bgPos = spawnCenter + viewDir * push;
-                backgroundInstance.transform.position = bgPos;
-            }
-            else
-            {
-                backgroundInstance.transform.position = spawnCenter - backgroundInstance.transform.forward * push;
-            }
+            float halfThickness = platformBoxSize.z * 0.5f;
+            float push = Mathf.Max(0f, halfThickness - backgroundAttachEpsilon);
+
+            Vector3 normal = backgroundInstance.transform.forward; 
+            backgroundInstance.transform.position = spawnCenter + normal * push;
+
             if (useFixedPlaneBounds)
             {
-                float width = 10f * backgroundInstance.transform.lossyScale.x; 
-                float height = 10f * backgroundInstance.transform.lossyScale.z; 
+                float width = 10f * backgroundInstance.transform.lossyScale.x;
+                float height = 10f * backgroundInstance.transform.lossyScale.z;
                 float depth = 1f;
                 return new Bounds(spawnCenter, new Vector3(width, height, depth));
             }
+
             if (backgroundInstance.TryGetComponent<BoxCollider>(out var box)) return box.bounds;
             var r = backgroundInstance.GetComponentInChildren<Renderer>();
             if (r != null) return r.bounds;
         }
+
         backgroundInstance = null;
         return new Bounds(spawnCenter, fallbackBackgroundSize);
     }

@@ -14,4 +14,12 @@ public class TestUI_Scene : MonoBehaviour
     {
         DIContainer.Resolve<GameFlowManager>().GameRestart();
     }
+    public void OpenPanel(GameObject obj)
+    { 
+        obj.SetActive(true);
+    }
+    public void ClosePanel(GameObject obj)
+    {
+        obj.SetActive(false);
+    }
 }

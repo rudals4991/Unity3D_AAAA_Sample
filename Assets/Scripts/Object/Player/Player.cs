@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
     public float CurrentGyroSpeed_LeftRight { get; private set; }
     public float CurrentGyroSpeed_Forward { get; private set; }
     public float CurrentMoveSpeed { get; private set; }
+    public float CurrentGyroSensitivity { get; private set; }
 
     public void Initialize(GameMode mode)
     {
@@ -62,6 +63,7 @@ public class Player : MonoBehaviour
         CurrentMoveSpeed = MoveSpeed;
         CurrentGyroSpeed_Forward = GyroSpeedForward;
         CurrentGyroSpeed_LeftRight = GyroSpeedLeftRight;
+        CurrentGyroSensitivity = Mathf.Clamp(PlayerPrefs.GetFloat("GyroSen", Sensitivity), 0.6f, 1.8f);
         ApplyScale(1f);
         ApplyGameMode(mode);
         SpeedScaleManager.OnSpeedScaleChanged -= ApplyScale;
@@ -133,5 +135,8 @@ public class Player : MonoBehaviour
         CurrentGyroSpeed_Forward = GyroSpeedForward * SpeedScale;
         CurrentGyroSpeed_LeftRight = GyroSpeedLeftRight * SpeedScale;
     }
-
+    public void ApplySensitivity(float value)
+    { 
+        CurrentGyroSensitivity = value;
+    }
 }

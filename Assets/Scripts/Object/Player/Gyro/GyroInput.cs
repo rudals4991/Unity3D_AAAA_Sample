@@ -13,7 +13,7 @@ public class GyroInput : MonoBehaviour
     public float GetTilt()
     {
 #if UNITY_ANDROID
-        return Mathf.Clamp(Input.gyro.gravity.x * player.Sensitivity, -1f, 1f);
+        return Mathf.Clamp(Input.gyro.gravity.x * player.CurrentGyroSensitivity, -1f, 1f);
 
 #else
         return GetEditorTilt();

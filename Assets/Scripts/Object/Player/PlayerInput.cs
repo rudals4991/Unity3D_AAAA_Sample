@@ -26,7 +26,7 @@ public class PlayerInput : MonoBehaviour, InputSystem_Actions.IPlayerActions
     public float GetTilt()
     {
 #if UNITY_ANDROID
-        float tilt = Input.gyro.gravity.x * player.Sensitivity;
+        float tilt = Input.gyro.gravity.x * player.CurrentGyroSensitivity;
         tilt = Mathf.Clamp(tilt, -1f, 1f);
         if (Mathf.Abs(tilt) < player.DeadZone) tilt = 0f;
         return tilt;

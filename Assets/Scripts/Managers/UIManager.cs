@@ -23,6 +23,14 @@ public class UIManager : MonoBehaviour, IManagerBase
         InitializeUIs();
         SetUIActive(MySceneManager.Instance.CurrentScene);
     }
+    void Update()
+    {
+        float dt = Time.unscaledDeltaTime;
+        foreach (var ui in uiList)
+        {
+            if (ui is ITickUI tickUI) tickUI.Tick(dt);
+        }
+    }
     public void RefreshUIList()
     {
         uiList.Clear();

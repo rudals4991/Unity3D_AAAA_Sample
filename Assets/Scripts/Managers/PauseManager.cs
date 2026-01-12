@@ -36,8 +36,14 @@ public class PauseManager : MonoBehaviour, IManagerBase
     public void Resume(float second = 3f)
     {
         if (State != PauseState.Paused) return;
+        if (second <= 0f)
+        {
+            Time.timeScale = 1f;
+            State = PauseState.Playing;
+            return;
+        }
         State = PauseState.Resuming;
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         countManager.StartResumeCountDown(second);
     }
     void OnCountDownFin(CountPurpose purpose)

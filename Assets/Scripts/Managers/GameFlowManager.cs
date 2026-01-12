@@ -91,6 +91,14 @@ public class GameFlowManager : MonoBehaviour, IManagerBase
         if (!isGamePlaying) return;
         pauseManager.Resume(second);
     }
+    public void GoTitle()
+    {
+        isGamePlaying = false;
+        isLoading = false;
+        hasPlayBegun = false;
+        pauseManager.Resume(0);
+        MySceneManager.Instance.LoadScene(SceneList.Title);
+    }
     void StartRun()
     {
         isLoading = false;

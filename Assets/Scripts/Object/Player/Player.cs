@@ -31,6 +31,7 @@ public class Player : MonoBehaviour
     bool canAutoMove;
     bool canGyroMove;
     bool canJump;
+    bool isMovingCached;
 
     // Speed Setting
     public float SpeedScale { get; private set; } = 1f;
@@ -74,10 +75,15 @@ public class Player : MonoBehaviour
         if(canAutoMove) PlayerAutoMove.Tick(dt);
         if(canGyroMove) PlayerGyroMove.Tick(dt);
         if (canJump) if (PlayerInput.GetJump()) PlayerJump.RequestJump();
-        Vector3 v = Rb != null ? Rb.linearVelocity : Vector3.zero;
-        v.y = 0f;
-        bool isMoving = v.sqrMagnitude > 0.00001f;
-        PlayerAnimation.SetMoveAnim(isMoving);
+        float planarSpeed = GetSpeed();
+        const float onTh = 0.3f;
+        const float offTh = 0.15f;
+        if (!isMovingCached) isMovingCached = planarSpeed > onTh;
+        else isMovingCached = planarSpeed > offTh;
+        PlayerAnimation.SetMoveAnim(isMovingCached);
+        float ms = Mathf.Clamp01(Mathf.InverseLerp(1f, 2f, SpeedScale));
+        if (!isMovingCached) ms = 0f;
+        PlayerAnimation.SetMS(ms, 0.12f, dt);
     }
     public void FixedTick(float fdt)
     {
@@ -138,5 +144,21 @@ public class Player : MonoBehaviour
     public void ApplySensitivity(float value)
     { 
         CurrentGyroSensitivity = value;
+    }
+    float GetSpeed()
+    {
+        if (Rb == null) return 0f;
+
+        Vector3 v = Rb.linearVelocity;
+        v.y = 0f;
+        switch (CurrentMode)
+        {
+            case GameMode.SideView_ToRight: return Mathf.Abs(v.x);
+            case GameMode.BackView_ToForward: return Mathf.Abs(v.z);
+            case GameMode.SideView_ToTop:
+            case GameMode.SideView_ToDown: return Mathf.Abs(v.z);
+            default:
+                return new Vector3(v.x, 0f, v.z).magnitude;
+        }
     }
 }

@@ -13,14 +13,16 @@ public class PlayerAnimation : MonoBehaviour
     {
         player.Animator.SetBool("Move", isMoving);
     }
+    public void SetMS(float value, float dampTime, float dt)
+    {
+        player.Animator.SetFloat("MS", value, dampTime, dt);
+    }
     void SetJumpAnim()
     {
-        Debug.Log("Jump");
         player.Animator.SetTrigger("Jump");
     }
     public void SetDoubleJump()
     {
-        Debug.Log("Double");
         player.Animator.SetTrigger("DoubleJump");
     }
 }

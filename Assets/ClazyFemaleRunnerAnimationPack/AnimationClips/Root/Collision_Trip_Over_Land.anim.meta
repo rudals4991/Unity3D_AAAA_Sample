@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 762ebb6548c8f2341a3011614c4e978c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 228668
+  packageName: Female Runner Action Animation Pack
+  packageVersion: 1.0.1
+  assetPath: Assets/ClazyFemaleRunnerAnimationPack/AnimationClips/Root/Collision_Trip_Over_Land.anim
+  uploadId: 517545

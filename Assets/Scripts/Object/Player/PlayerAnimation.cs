@@ -15,10 +15,12 @@ public class PlayerAnimation : MonoBehaviour
     }
     void SetJumpAnim()
     {
+        Debug.Log("Jump");
         player.Animator.SetTrigger("Jump");
     }
     public void SetDoubleJump()
     {
+        Debug.Log("Double");
         player.Animator.SetTrigger("DoubleJump");
     }
 }

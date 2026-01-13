@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e7f0bf09b05177c4e9532addeb1d8d65
+timeCreated: 1527182431
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 228668
+  packageName: Female Runner Action Animation Pack
+  packageVersion: 1.0.1
+  assetPath: Assets/ClazyFemaleRunnerAnimationPack/Materials/RunnerObstacles_demo.mat
+  uploadId: 517545

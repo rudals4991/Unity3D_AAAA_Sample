@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CountManager : MonoBehaviour, IManagerBase
 {
-    public int Priority => 1;
+    public int Priority => 2;
     public bool IsGameActive { get; private set; } = false;
     public bool IsCounting { get; private set; } = false;
     public static event Action<int> OnCountDown;

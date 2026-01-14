@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance; 
 
     #region ManagerClass
+    SoundManager soundManager;
     CountManager countManager;
     PauseManager pauseManager;
     CharacterManager characterManager;
@@ -61,6 +62,7 @@ public class GameManager : MonoBehaviour
 
     void GetAndAdd()
     {
+        soundManager ??= GetComponent<SoundManager>() ?? gameObject.AddComponent<SoundManager>();
         countManager ??= GetComponent<CountManager>() ?? gameObject.AddComponent<CountManager>();
         pauseManager ??= GetComponent<PauseManager>() ?? gameObject.AddComponent<PauseManager>();
         characterManager ??= GetComponent<CharacterManager>() ?? gameObject.AddComponent<CharacterManager>();

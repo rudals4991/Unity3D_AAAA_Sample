@@ -8,7 +8,7 @@ public class CharacterManager : MonoBehaviour, IManagerBase
     Player player;
     CameraViewController controller;
     bool tickEnabled = false;
-    public int Priority => 3;
+    public int Priority => 4;
 
     public void Exit()
     {

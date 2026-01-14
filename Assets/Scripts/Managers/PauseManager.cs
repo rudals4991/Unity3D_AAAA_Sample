@@ -8,7 +8,7 @@ public enum PauseState
 
 public class PauseManager : MonoBehaviour, IManagerBase
 {
-    public int Priority => 2;
+    public int Priority => 3;
     public PauseState State { get; private set; } = PauseState.Playing;
     public bool IsHardPaused => State == PauseState.Paused; // 완전 정지(카운트도 멈춤)
     public bool BlockGameplayTick => State != PauseState.Playing; // 플레이어/맵 Tick 차단

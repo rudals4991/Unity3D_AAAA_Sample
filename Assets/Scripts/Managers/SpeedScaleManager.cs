@@ -5,9 +5,9 @@ using UnityEngine;
 public class SpeedScaleManager : MonoBehaviour, IManagerBase
 {
     public static event Action<float> OnSpeedScaleChanged;
-    float amount = 0.2f;
+    float amount = 0.16f;
     float speedScale = 1f;
-    public int Priority => 7;
+    public int Priority => 8;
 
     public void Exit()
     {

@@ -7,7 +7,7 @@ public class PoolManager : MonoBehaviour, IManagerBase
     PlatformPool platformPool;
     public TilePool TilePool => tilePool;
     public PlatformPool PlatformPool => platformPool;
-    public int Priority => 4;
+    public int Priority => 5;
 
     public void Exit()
     {

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour, IManagerBase
 {
-    public int Priority => 10;
+    public int Priority => 11;
     List<IUIBase> uiList = new();
 
     public void Exit()

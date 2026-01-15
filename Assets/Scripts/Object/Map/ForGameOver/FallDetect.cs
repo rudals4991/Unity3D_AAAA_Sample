@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class FallDetect : MonoBehaviour
 {
+    GameoverReason reason = GameoverReason.Fall;
     float fallOffset = 5f;
     float viewportMargin = 0.05f;
 
@@ -55,7 +56,11 @@ public class FallDetect : MonoBehaviour
             if (needBaseline) TryCaptureFallBaseline();
             if (!baseLine || player == null) return;
             float threshold = fallBaseY - fallOffset;
-            if (player.transform.position.y < threshold) gameFlowManager.GameOver(GameoverReason.Fall);
+            if (player.transform.position.y < threshold)
+            {
+                player.PlaySFX(reason);
+                gameFlowManager.GameOver(GameoverReason.Fall);
+            }
             return;
         }
         if (currentMode == GameMode.SideView_ToTop || currentMode == GameMode.SideView_ToDown)
@@ -74,7 +79,11 @@ public class FallDetect : MonoBehaviour
             }
             bool outX = vp.x < -viewportMargin || vp.x > 1f + viewportMargin;
             bool outY = vp.y < -viewportMargin || vp.y > 1f + viewportMargin;
-            if (outX || outY) gameFlowManager.GameOver(GameoverReason.OutOfScreen);
+            if (outX || outY)
+            {
+                player.PlaySFX(reason);
+                gameFlowManager.GameOver(GameoverReason.OutOfScreen);
+            }
         }
     }
     void ResolvePlayer()

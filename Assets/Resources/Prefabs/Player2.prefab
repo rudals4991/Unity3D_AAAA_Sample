@@ -195,6 +195,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   data: {fileID: 11400000, guid: d4597ef1c9ebba9448d2baa141e62661, type: 2}
+  fallSFX: {fileID: 8300000, guid: ec94c2a7dbae01646a56452d0f8a5b65, type: 3}
+  crushSFX: {fileID: 8300000, guid: 5fd0ed22ab0bab4448031b7b4004a8ab, type: 3}
 --- !u!114 &5327922771497264614
 MonoBehaviour:
   m_ObjectHideFlags: 0

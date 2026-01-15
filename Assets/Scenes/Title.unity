@@ -258,6 +258,7 @@ GameObject:
   - component: {fileID: 785364947}
   - component: {fileID: 785364949}
   - component: {fileID: 785364950}
+  - component: {fileID: 785364951}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -322,7 +323,21 @@ MonoBehaviour:
   gameIntro: {fileID: 8300000, guid: 9d890a3b7e7bfd049899a7a5dd9009ee, type: 3}
   gameLoop: {fileID: 8300000, guid: 42431f8bbb8047749baddb79cfddb5f3, type: 3}
   gameOverLoop: {fileID: 8300000, guid: 5798e9524c37d2d46bf749694ec8f3d1, type: 3}
-  defaultBgmVolume: 1
+  defaultBGMVolume: 1
+  defaultSFXVolume: 1
+--- !u!114 &785364951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785364946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed161a1de8d4d945aa2414b83a9f5ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedScaleManager
+  sfx: {fileID: 8300000, guid: f5f14b6b0548d78488a8015edced4a6e, type: 3}
 --- !u!1 &876639361
 GameObject:
   m_ObjectHideFlags: 0

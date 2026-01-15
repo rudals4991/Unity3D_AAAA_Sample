@@ -3,6 +3,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] PlayerData data;
+    [SerializeField] AudioClip fallSFX;
+    [SerializeField] AudioClip crushSFX;
 
     // Player Components
     public Rigidbody Rb { get; private set; }                  
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
     bool canGyroMove;
     bool canJump;
     bool isMovingCached;
+    SoundManager soundManager;
 
     // Speed Setting
     public float SpeedScale { get; private set; } = 1f;
@@ -148,7 +151,6 @@ public class Player : MonoBehaviour
     float GetSpeed()
     {
         if (Rb == null) return 0f;
-
         Vector3 v = Rb.linearVelocity;
         v.y = 0f;
         switch (CurrentMode)
@@ -160,5 +162,12 @@ public class Player : MonoBehaviour
             default:
                 return new Vector3(v.x, 0f, v.z).magnitude;
         }
+    }
+    public void PlaySFX(GameoverReason reason)
+    {
+        Debug.Log($"reason is {reason}");
+        if (soundManager == null) soundManager = DIContainer.Resolve<SoundManager>();
+        if (reason == GameoverReason.Collision) soundManager.PlaySFX(crushSFX);
+        else soundManager.PlaySFX(fallSFX);
     }
 }

@@ -12,7 +12,7 @@ public class ObjectCollision : MonoBehaviour
     {
         if (!collision.gameObject.TryGetComponent<Player>(out _)) return;
         if (!gameFlowManager.CanGameplay) return;
+        collision.gameObject.GetComponent<Player>().PlaySFX(reason);
         gameFlowManager.GameOver(reason);
-        Debug.Log("GameOver");
     }
 }

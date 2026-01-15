@@ -28,7 +28,7 @@ public class BGM : SoundClipBase
         audioSource.loop = false;
         audioSource.Play();
         if (loopClip != null)
-            introRoutine = StartCoroutine(CoSwitchToLoopAfterIntro(introClip.length, loopClip, playToken));
+            introRoutine = StartCoroutine(IntroToLoop(introClip.length, loopClip, playToken));
     }
     public void PlayLoop(AudioClip clip, float volume)
     {
@@ -57,7 +57,7 @@ public class BGM : SoundClipBase
             introRoutine = null;
         }
     }
-    IEnumerator CoSwitchToLoopAfterIntro(float introLength, AudioClip loopClip, int token)
+    IEnumerator IntroToLoop(float introLength, AudioClip loopClip, int token)
     {
         yield return new WaitForSecondsRealtime(introLength);
         if (token != playToken) yield break;

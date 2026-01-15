@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class BGMController : MonoBehaviour
 {
-    [SerializeField] Slider bgmSlider;
+    [SerializeField] Slider slider;
     SoundManager soundManager;
     bool isBinding;
     private void OnEnable()
@@ -17,19 +17,19 @@ public class BGMController : MonoBehaviour
     void Bind()
     {
         if (isBinding) return;
-        if (bgmSlider == null) return;
+        if (slider == null) return;
         soundManager = TryResolveSoundManager();
         if (soundManager == null) return;
-        bgmSlider.minValue = 0f;
-        bgmSlider.maxValue = 1f;
-        bgmSlider.SetValueWithoutNotify(soundManager.BgmVolume);
-        bgmSlider.onValueChanged.RemoveListener(OnValueChanged);
-        bgmSlider.onValueChanged.AddListener(OnValueChanged);
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.SetValueWithoutNotify(soundManager.BGMVolume);
+        slider.onValueChanged.RemoveListener(OnValueChanged);
+        slider.onValueChanged.AddListener(OnValueChanged);
         isBinding = true;
     }
     void Unbind()
     {
-        if (bgmSlider != null)  bgmSlider.onValueChanged.RemoveListener(OnValueChanged);
+        slider.onValueChanged.RemoveListener(OnValueChanged);
         isBinding = false;
         soundManager = null;
     }
@@ -40,7 +40,7 @@ public class BGMController : MonoBehaviour
 
         if (soundManager == null) return;
 
-        soundManager.SetBgmVolume(value);
+        soundManager.SetBGMVolume(value);
     }
     SoundManager TryResolveSoundManager()
     {

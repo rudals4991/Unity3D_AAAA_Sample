@@ -1,16 +1,17 @@
 using UnityEngine;
 
-public class SFX : MonoBehaviour
+public class SFX : SoundClipBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Initialize()
     {
-        
+        base.Initialize();
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+        audioSource.spatialBlend = 0;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void Play(AudioClip clip, float volume)
     {
-        
+        if (clip == null) return;
+        audioSource.PlayOneShot(clip, volume);
     }
 }

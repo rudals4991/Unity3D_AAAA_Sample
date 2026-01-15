@@ -24,9 +24,13 @@ public class SoundManager : MonoBehaviour, IManagerBase
 
     [Header("Default Volume")]
     [Range(0f, 1f)]
-    [SerializeField] float defaultBgmVolume = 1f;
-    public float BgmVolume { get; private set; }
-    BGM bgmPlayer;
+    [SerializeField] float defaultBGMVolume = 1f;
+    [Range(0f, 1f)]
+    [SerializeField] float defaultSFXVolume = 1f;
+    public float BGMVolume { get; private set; }
+    public float SFXVolume { get; private set; }
+    BGM bgm;
+    SFX sfx;
     BgmState? currentState;
 
     public void Exit()
@@ -40,10 +44,14 @@ public class SoundManager : MonoBehaviour, IManagerBase
     {
         DIContainer.Register(this);
         yield return null;
-        BgmVolume = PlayerPrefs.GetFloat("BGMVolume", defaultBgmVolume);
-        BgmVolume = Mathf.Clamp01(BgmVolume);
-        EnsureBgmPlayer();
-        bgmPlayer.SetVolume(BgmVolume);
+        BGMVolume = PlayerPrefs.GetFloat("BGMVolume", defaultBGMVolume);
+        SFXVolume = PlayerPrefs.GetFloat("SFXVolume", defaultSFXVolume);
+        BGMVolume = Mathf.Clamp01(BGMVolume);
+        SFXVolume = Mathf.Clamp01(SFXVolume);
+        EnsureBGMPlayer();
+        EnsureSFXPlayer();
+
+        bgm.SetVolume(BGMVolume);
 
         MySceneManager.OnSceneLoaded -= SceneLoaded;
         MySceneManager.OnSceneLoaded += SceneLoaded;
@@ -52,14 +60,14 @@ public class SoundManager : MonoBehaviour, IManagerBase
         GameFlowManager.OnGameOvered -= GameOvered;
         GameFlowManager.OnGameOvered += GameOvered;
 
-        RequestBgm(BgmState.Title);
+        RequestBGM(BgmState.Title);
     }
-    void EnsureBgmPlayer()
+    void EnsureBGMPlayer()
     {
-        bgmPlayer = GetComponentInChildren<BGM>(true);
-        if (bgmPlayer != null)
+        bgm = GetComponentInChildren<BGM>(true);
+        if (bgm != null)
         {
-            bgmPlayer.Initialize();
+            bgm.Initialize();
             return;
         }
         var go = new GameObject("[BGM]");
@@ -68,30 +76,50 @@ public class SoundManager : MonoBehaviour, IManagerBase
         src.playOnAwake = false;
         src.loop = true;
         src.spatialBlend = 0f;
-        bgmPlayer = go.AddComponent<BGM>();
-        bgmPlayer.Initialize();
+        bgm = go.AddComponent<BGM>();
+        bgm.Initialize();
     }
-    public void SetBgmVolume(float volume)
+    void EnsureSFXPlayer()
     {
-        BgmVolume = Mathf.Clamp01(volume);
-        PlayerPrefs.SetFloat("BGMVolume", BgmVolume);
-
-        if (bgmPlayer != null)
-            bgmPlayer.SetVolume(BgmVolume);
+        sfx = GetComponentInChildren<SFX>(true);
+        if (sfx != null)
+        {
+            sfx.Initialize();
+            return;
+        }
+        var go = new GameObject("[SFX]");
+        go.transform.SetParent(transform);
+        var src = go.AddComponent<AudioSource>();
+        src.playOnAwake = false;
+        src.loop = false;
+        src.spatialBlend = 0f;
+        sfx = go.AddComponent<SFX>();
+        sfx.Initialize();
+    }
+    public void SetBGMVolume(float volume)
+    {
+        BGMVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("BGMVolume", BGMVolume);
+        if (bgm != null) bgm.SetVolume(BGMVolume);
+    }
+    public void SetSFXVolume(float volume)
+    { 
+        SFXVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("SFXVolume", SFXVolume);
     }
     void SceneLoaded(SceneList scene)
     {
-        if (scene == SceneList.Title) RequestBgm(BgmState.Title);
+        if (scene == SceneList.Title) RequestBGM(BgmState.Title);
     }
     void GameStarted()
     {
-        RequestBgm(BgmState.GamePlay);
+        RequestBGM(BgmState.GamePlay);
     }
     void GameOvered(GameoverReason _)
     {
-        RequestBgm(BgmState.GameOver);
+        RequestBGM(BgmState.GameOver);
     }
-    void RequestBgm(BgmState next)
+    void RequestBGM(BgmState next)
     {
         if (currentState.HasValue && currentState.Value == next) return;
         currentState = next;
@@ -101,8 +129,8 @@ public class SoundManager : MonoBehaviour, IManagerBase
             case BgmState.GamePlay: PlayIntroLoop(gameIntro, gameLoop); break;
             case BgmState.GameOver:
                 {
-                    if (gameOverLoop != null) bgmPlayer.PlayLoop(gameOverLoop, BgmVolume);
-                    else bgmPlayer.Stop();
+                    if (gameOverLoop != null) bgm.PlayLoop(gameOverLoop, BGMVolume);
+                    else bgm.Stop();
                 } break;
         }
     }
@@ -110,19 +138,24 @@ public class SoundManager : MonoBehaviour, IManagerBase
     {
         if (intro == null && loop == null)
         {
-            bgmPlayer.Stop();
+            bgm.Stop();
             return;
         }
         if (intro == null || intro.length <= 0f)
         {
-            bgmPlayer.PlayLoop(loop, BgmVolume);
+            bgm.PlayLoop(loop, BGMVolume);
             return;
         }
         if (loop == null)
         {
-            bgmPlayer.PlayIntroToLoop(intro, null, BgmVolume);
+            bgm.PlayIntroToLoop(intro, null, BGMVolume);
             return;
         }
-        bgmPlayer.PlayIntroToLoop(intro, loop, BgmVolume);
+        bgm.PlayIntroToLoop(intro, loop, BGMVolume);
+    }
+    public void PlaySFX(AudioClip clip)
+    {
+        if (clip == null) return;
+        sfx.Play(clip, SFXVolume);
     }
 }

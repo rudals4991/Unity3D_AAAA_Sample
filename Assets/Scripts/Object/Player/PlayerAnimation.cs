@@ -25,10 +25,12 @@ public class PlayerAnimation : MonoBehaviour
     }
     void SetJumpAnim()
     {
+        player.Animator.SetBool("IsGround", false);
         player.Animator.SetTrigger("Jump");
     }
     public void SetDoubleJump()
     {
+        player.Animator.SetBool("IsGround", false);
         player.Animator.SetTrigger("DoubleJump");
     }
 }

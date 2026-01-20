@@ -16,7 +16,7 @@ public class GameModeManager : MonoBehaviour, IManagerBase
         GameMode.SideView_ToDown,
     };
     int index = 0;
-    GameMode currentMode;
+    public GameMode CurrentMode { get; private set; }
     bool isFirstMode = true;
     CharacterManager characterManager;
     MapManager mapManager;
@@ -56,7 +56,7 @@ public class GameModeManager : MonoBehaviour, IManagerBase
     }
     public void SetMode(GameMode mode)
     {
-        currentMode = mode;
+        CurrentMode = mode;
         if (isFirstMode)
         {
             if (characterManager == null) Debug.Log("Null");
@@ -70,6 +70,6 @@ public class GameModeManager : MonoBehaviour, IManagerBase
             characterManager.SetMode(mode);
             mapManager.PrepareForMode(mode);
         }
-        OnGameModeChanged?.Invoke(currentMode);
+        OnGameModeChanged?.Invoke(CurrentMode);
     }
 }

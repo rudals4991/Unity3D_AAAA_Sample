@@ -12,7 +12,7 @@ public class PlayerJump : MonoBehaviour
     bool jumpRequested = false;
     //bool isGround = false;
     public bool isGround { get; private set; } = false;
-    bool wasGround = false;
+    //bool wasGround = false;
 
     Player player;
     public LayerMask groundLayer;
@@ -21,6 +21,7 @@ public class PlayerJump : MonoBehaviour
 
     bool platformJumpPending = false;
     float pendingPlatformForce = 0f;
+    float groundLockTimer = 0f;
 
     int jumpCount
     {
@@ -35,22 +36,20 @@ public class PlayerJump : MonoBehaviour
     }
     public void FixedTick()
     {
+        if (groundLockTimer > 0f) groundLockTimer -= Time.fixedDeltaTime;
         if (platformJumpPending)
         {
             platformJumpPending = false;
             Jump(pendingPlatformForce, consumeCount: true);
         }
+        if (jumpRequested) TryJump();
         float vy = player.Rb.linearVelocity.y;
-        bool isAscending = vy > 0;
+        bool isAscending = vy > 0f;
         if (wasAscending && !isAscending) OnJumpApex?.Invoke();
         wasAscending = isAscending;
-        isGround = CheckGround();
-        if (!wasGround && isGround)
-        {
-            wasGround = isGround;
-            ResetJumpState();
-        }
-        if (jumpRequested) TryJump();
+        bool prevGround = isGround;
+        isGround = (groundLockTimer > 0f) ? false : CheckGround();
+        if (!prevGround && isGround) ResetJumpState();
         ApplyGravity();
     }
     void Jump(float force, bool consumeCount)
@@ -59,8 +58,6 @@ public class PlayerJump : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * force, ForceMode.VelocityChange);
         if (consumeCount) jumpCount++;
-        //wasAscending = true;
-
         if (consumeCount && jumpCount == 1) OnJumpStarted?.Invoke();
         else if (consumeCount && jumpCount == 2) player.PlayerAnimation.SetDoubleJump();
     }
@@ -72,11 +69,8 @@ public class PlayerJump : MonoBehaviour
     bool CheckGround()
     {
         float dist = 0.2f;
-        wasGround = isGround;
         Vector3 origin = transform.position + Vector3.up * 0.1f;
-        Vector3 direction = Vector3.down;
-        Ray ray = new Ray(origin, direction);
-        return Physics.Raycast(ray, out RaycastHit hitInfo, dist, groundLayer, QueryTriggerInteraction.Ignore);
+        return Physics.Raycast(origin, Vector3.down, dist, groundLayer, QueryTriggerInteraction.Ignore);
     }
     bool CanJump()
     {
@@ -85,8 +79,9 @@ public class PlayerJump : MonoBehaviour
     void TryJump()
     {
         if (!CanJump()) return;
-
         jumpRequested = false;
+        groundLockTimer = 0.12f;
+        isGround = false;
         Jump(player.JumpForce, consumeCount: true);
     }
     void ApplyGravity()
@@ -109,24 +104,14 @@ public class PlayerJump : MonoBehaviour
     public void ResetJumpState()
     {
         jumpCount = 0;
-        wasGround = false;
         wasAscending = false;
         platformJumpPending = false;
         pendingPlatformForce = 0f;
+        jumpRequested = false;
     }
     public void RequestPlatformJump(float force)
     {
         platformJumpPending = true;
         pendingPlatformForce = force;
     }
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Vector3 origin = transform.position + Vector3.up * 0.01f;
-        Vector3 direction = Vector3.down;
-        Ray ray = new Ray(origin, direction);
-        Gizmos.DrawRay(ray);
-    }
-#endif
 }

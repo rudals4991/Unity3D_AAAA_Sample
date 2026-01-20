@@ -84,7 +84,6 @@ public class Player : MonoBehaviour
         if (!isMovingCached) isMovingCached = planarSpeed > onTh;
         else isMovingCached = planarSpeed > offTh;
         PlayerAnimation.SetMoveAnim(isMovingCached);
-        Debug.Log($"isGround = {PlayerJump.isGround}");
     }
     public void FixedTick(float fdt)
     {

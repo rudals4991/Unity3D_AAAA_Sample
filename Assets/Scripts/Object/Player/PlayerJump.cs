@@ -10,7 +10,8 @@ public class PlayerJump : MonoBehaviour
     public event Action OnJumpApex;
 
     bool jumpRequested = false;
-    bool isGround = false;
+    //bool isGround = false;
+    public bool isGround { get; private set; } = false;
     bool wasGround = false;
 
     Player player;
@@ -118,4 +119,14 @@ public class PlayerJump : MonoBehaviour
         platformJumpPending = true;
         pendingPlatformForce = force;
     }
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Vector3 origin = transform.position + Vector3.up * 0.01f;
+        Vector3 direction = Vector3.down;
+        Ray ray = new Ray(origin, direction);
+        Gizmos.DrawRay(ray);
+    }
+#endif
 }

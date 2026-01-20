@@ -84,15 +84,20 @@ public class Player : MonoBehaviour
         if (!isMovingCached) isMovingCached = planarSpeed > onTh;
         else isMovingCached = planarSpeed > offTh;
         PlayerAnimation.SetMoveAnim(isMovingCached);
-        float ms = Mathf.Clamp01(Mathf.InverseLerp(1f, 2f, SpeedScale));
-        if (!isMovingCached) ms = 0f;
-        PlayerAnimation.SetMS(ms, 0.12f, dt);
+        Debug.Log($"isGround = {PlayerJump.isGround}");
     }
     public void FixedTick(float fdt)
     {
         if (canAutoMove) PlayerAutoMove.FixedTick(fdt);
         if (canGyroMove) PlayerGyroMove.FixedTick(fdt);
         PlayerJump.FixedTick();
+    }
+    public void LateTick(float dt)
+    {
+        float ms = Mathf.Clamp01(Mathf.InverseLerp(1f, 2f, SpeedScale));
+        if (!isMovingCached) ms = 0f;
+        PlayerAnimation.SetMS(ms, 0.12f, dt);
+        PlayerAnimation.Tick();
     }
 
     public void ApplyGameMode(GameMode gameMode)

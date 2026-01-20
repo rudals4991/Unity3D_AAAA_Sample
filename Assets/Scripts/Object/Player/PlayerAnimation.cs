@@ -9,6 +9,12 @@ public class PlayerAnimation : MonoBehaviour
         player.PlayerJump.OnJumpStarted -= SetJumpAnim;
         player.PlayerJump.OnJumpStarted += SetJumpAnim;
     }
+
+    public void Tick()
+    {
+        player.Animator.SetBool("IsGround", player.PlayerJump.isGround);
+    }
+
     public void SetMoveAnim(bool isMoving)
     {
         player.Animator.SetBool("Move", isMoving);

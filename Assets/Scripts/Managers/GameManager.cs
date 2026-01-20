@@ -59,6 +59,11 @@ public class GameManager : MonoBehaviour
         float fdt = Time.fixedDeltaTime;
         characterManager.FixedTick(fdt);
     }
+    private void LateUpdate()
+    {
+        float dt = Time.deltaTime;
+        characterManager.LateTick(dt);
+    }
 
     void GetAndAdd()
     {

@@ -72,4 +72,10 @@ public class CharacterManager : MonoBehaviour, IManagerBase
         if (player == null) return;
         player.FixedTick(fdt);
     }
+    public void LateTick(float dt)
+    {
+        if (!tickEnabled) return;
+        if (player == null) return;
+        player.LateTick(dt);
+    }
 }
